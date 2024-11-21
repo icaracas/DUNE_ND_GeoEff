@@ -722,8 +722,8 @@ int main(int argc, char** argv)
   if (myfileVerbose) myfile << "Tot evts: " << nentries << "\n";
   if (throwfileVerbose) myfile << "Tot evts: " << nentries << "\n";
   if (hadronhitVerbose) myfile << "Tot evts: " << nentries << "\n";
-  //for ( int ientry = 0; ientry < nentries; ientry++ )
-  for ( int ientry = 54; ientry < 55; ientry++ ) // Use for drwaing one hardronic hits plots
+  for ( int ientry = 0; ientry < nentries; ientry++ )
+  //for ( int ientry = 54; ientry < 55; ientry++ ) // Use for drwaing one hardronic hits plots
   {  
     
     t->GetEntry(ientry);
@@ -1384,13 +1384,13 @@ int main(int argc, char** argv)
                        VetoEnergyEventsPass.emplace_back(vetoEThrow[0][0][(counter5-1)*64 + ithrow]);
                        TrimEnergyEventsPass.emplace_back(trimEThrow[0][0][(counter5-1)*64 + ithrow]);
                        TotalEnergyEventsPass.emplace_back(eff->getCurrentThrowsTotE());
-                       if(i_vtx_vx == 7.75){
+                       /*if(i_vtx_vx == 7.75){
                          CurrentThrowDepsX.emplace_back(eff->getCurrentThrowDepsX((counter5-1)*64 + ithrow));
                          CurrentThrowDepsY.emplace_back(eff->getCurrentThrowDepsY((counter5-1)*64 + ithrow));
                          CurrentThrowDepsZ.emplace_back(eff->getCurrentThrowDepsZ((counter5-1)*64 + ithrow));
                          CurrentThrowTotE.emplace_back(eff->getCurrentThrowsTotE());
                          std::cout<<" iwritten: "<<iwritten<<std::endl;
-                       }     
+                       } */    
                        //VtxYEventsPass = eff->getCurrentThrowTranslationsY();
                        //VtxZEventsPass = eff->getCurrentThrowTranslationsZ();
                     }
