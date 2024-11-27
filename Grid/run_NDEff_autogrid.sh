@@ -74,10 +74,10 @@ done
 echo "Got input file: $myinfile"
 
 # Run program
-echo "cd ${_CONDOR_JOB_IWD}/DUNE_ND_GeoEff/Grid"
-cd ${_CONDOR_JOB_IWD}/DUNE_ND_GeoEff/Grid
-echo "ls -l ${_CONDOR_JOB_IWD}/DUNE_ND_GeoEff/Grid"
-ls -l ${_CONDOR_JOB_IWD}/DUNE_ND_GeoEff/Grid
+echo "cd ${_CONDOR_JOB_IWD}/Grid"
+cd ${_CONDOR_JOB_IWD}/Grid
+echo "ls -l ${_CONDOR_JOB_IWD}/Grid"
+ls -l ${_CONDOR_JOB_IWD}/Grid
 echo "./NtupleOutVetoAndTrimE_AssumeEqualEffAtAllOA $myinfile"
 ./NtupleOutVetoAndTrimE_AssumeEqualEffAtAllOA $myinfile
 
@@ -86,7 +86,7 @@ echo "Finish ./NtupleOutVetoAndTrimE_AssumeEqualEffAtAllOA"
 # Unique name in case we send multiple jobs.
 OUTFILE=EtrimHistosFile_OAPosSameAsCAFs_${CLUSTER}_${PROCESS}.root
 
-if [ -f Output_FDGeoEff.root ]; then
+if [ -f FileWithHistEtrim_CoeffsAndOAPoswithSameEff.root ]; then
 
   echo "mv FileWithHistEtrim_CoeffsAndOAPoswithSameEff.root $OUTFILE"
   mv FileWithHistEtrim_CoeffsAndOAPoswithSameEff.root $OUTFILE
