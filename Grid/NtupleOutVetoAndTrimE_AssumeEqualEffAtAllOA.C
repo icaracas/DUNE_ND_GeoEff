@@ -65,8 +65,28 @@ vector<double> generatePoints(double start)
 }
 
 // Draw ND hadronic hits plot
-void NtupleOutVetoAndTrimE_AssumeEqualEffAtAllOA()
-{
+// void NtupleOutVetoAndTrimE_AssumeEqualEffAtAllOA()
+// {
+int main(int argc, char** argv){
+  if (argc < 2) {
+    std::cerr <<" Usage: "<< argv[0]<<" <input_root_file> "<<std::endl;
+    return 1;
+  }
+
+  const char* inputFileName = argv[1];
+  TFile* inputFile = TFile::Open(inputFileName);
+  if(!inputFile || inputFile->IsZombie()){
+    std::cerr<<" error: could not open file: "<<inputFileName<<std::endl;
+  }
+  std::cout<<" successfully opened file "<< inputFileName<<std::endl;
+// }
+// // Draw ND hadronic hits plot
+// void ReadNtupleOutVetoAndTrimE()
+// {
+
+  //gStyle->SetOptStat(0); // Remove Stat Box
+
+
   gROOT->Reset();
   //gStyle->SetOptStat(0); // Remove Stat Box
   //File with coefficients histogram
@@ -76,7 +96,8 @@ void NtupleOutVetoAndTrimE_AssumeEqualEffAtAllOA()
   CoefficientsHist->SetDirectory(0);
   FileWithCoeffs->Close();
   // Input FDroot file
-  TString FileIn = "RootFiles/FDGeoEff_72040717_0.root";
+  TString FileIn = inputFileName;
+  // TString FileIn = "RootFiles/FDGeoEff_72040717_0.root";
   //
   // Read branch from input trees
   //
@@ -545,7 +566,7 @@ void NtupleOutVetoAndTrimE_AssumeEqualEffAtAllOA()
   // delete all canvas
 
 
-
+return 0;
 
 
 }
