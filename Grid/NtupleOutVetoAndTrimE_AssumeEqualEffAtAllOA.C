@@ -190,15 +190,15 @@ int main(int argc, char** argv){
 
     if (i==0){
       int count = 0;
-      cout<<" Entry: "<<i<<endl;
+      // cout<<" Entry: "<<i<<endl;
       for(float valueVeto : *VetoEnergyEventsPass){
         //cout<<" veto E: "<<valueVeto<<endl;
         if(valueVeto > 30.00)
           cout<<" more than 30 not correct!! "<<endl;
       }
-      for(uint64_t value : *ThrowResults){
-        count+=1;
-      }
+      // for(uint64_t value : *ThrowResults){
+      //   count+=1;
+      // }
     }
   }
   // vector<Int_t> a_ND_off_axis_pos_vec = {-2800, -1600, 0};
@@ -298,7 +298,7 @@ int main(int argc, char** argv){
   TH2D* CoefficientsAtOAPosHist = new TH2D("CoefficientsAtOAPosHist", "CoefficientsAtOAPosHist", 67, -30.5, 3, 60, -0.3, 0.3);
 
 
-  TFile* FileWithHistoInfo = new TFile("FileWithHist_10EventsFromJobSub_NoTrimX_CoeffsAndOAPoswithSameEff.root", "RECREATE");
+  TFile* FileWithHistoInfo = new TFile("FileWithHistEtrim_CoeffsAndOAPoswithSameEff.root", "RECREATE");
 
   //===want to look only at Event3 with Eff =1 at all Vtx_x for now ====
 
