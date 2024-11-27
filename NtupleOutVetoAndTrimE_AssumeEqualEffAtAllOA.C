@@ -114,19 +114,23 @@ void NtupleOutVetoAndTrimE_AssumeEqualEffAtAllOA()
   t_effTree->Add(FileIn.Data());
   int ND_Sim_n_hadronic_Edep_b;
   vector<float> *HadronHitEdeps =0; // Hadron hit segment energy deposits [MeV]
-  vector<vector<float>> *CurrentThrowDepsX = 0; // Coordinates of hadron hits X after random throws
-  vector<vector<float>> *CurrentThrowDepsY =0; // Coordinates of hadron hits Y after random throws
-  vector<vector<float>> *CurrentThrowDepsZ = 0; // Coordinates of hadron hits Z after random throws
+  // vector<vector<float>> *CurrentThrowDepsX = 0; // Coordinates of hadron hits X after random throws
+  // vector<vector<float>> *CurrentThrowDepsY =0; // Coordinates of hadron hits Y after random throws
+  // vector<vector<float>> *CurrentThrowDepsZ = 0; // Coordinates of hadron hits Z after random throws
   vector<float> *CurrentThrowTotE = 0;
   vector<vector<float>> *ND_OffAxis_Sim_hadronic_hit_xyz=0; // coordinates of hadron hits before random throws
 
+  double ND_Gen_numu_E; // Energy of generator level neutrino [GeV]
+  double ND_E_vis_true; // True visible energy of neutrino [GeV]
 
   t_effTree->SetBranchAddress("ND_Sim_n_hadronic_Edep_b",         &ND_Sim_n_hadronic_Edep_b);
-  t_effTree->SetBranchAddress("CurrentThrowDepsX",         &CurrentThrowDepsX);
-  t_effTree->SetBranchAddress("CurrentThrowDepsY",         &CurrentThrowDepsY);
-  t_effTree->SetBranchAddress("CurrentThrowDepsZ",         &CurrentThrowDepsZ);
+  // t_effTree->SetBranchAddress("CurrentThrowDepsX",         &CurrentThrowDepsX);
+  // t_effTree->SetBranchAddress("CurrentThrowDepsY",         &CurrentThrowDepsY);
+  // t_effTree->SetBranchAddress("CurrentThrowDepsZ",         &CurrentThrowDepsZ);
   t_effTree->SetBranchAddress("CurrentThrowTotE",          &CurrentThrowTotE);
   t_effTree->SetBranchAddress("HadronHitEdeps",            &HadronHitEdeps);
+  t_effTree->SetBranchAddress("ND_E_vis_true",             &ND_E_vis_true);
+  t_effTree->SetBranchAddress("ND_Gen_numu_E",             &ND_Gen_numu_E);
   t_effValues->SetBranchAddress("totEnergyFDatND_f",   &totEnergyFDatND_f);
   // t_effTree->SetBranchAddress("ND_OffAxis_Sim_hadronic_hit_xyz",            &ND_OffAxis_Sim_hadronic_hit_xyz);
 
@@ -205,31 +209,31 @@ void NtupleOutVetoAndTrimE_AssumeEqualEffAtAllOA()
 
   // Define the non-dead regions
   // if (true)
-  for (auto x : a_ND_vtx_vx_vec){
-      std::cout <<" vtx: "<< x << ",  ";
-      if (x<-250)
-        Coefficients.emplace_back(69*1e-6);
-      if(x>=-250 && x<-200)
-        Coefficients.emplace_back(100*1e-6);
-      if(x>=-200 && x<-150)
-        Coefficients.emplace_back(20*1e-6);
-      if(x>=-150 && x<-100)
-        Coefficients.emplace_back(25*1e-6);
-      if(x>=-100 && x<-50)
-        Coefficients.emplace_back(28*1e-6);
-      if(x>=-50 && x<0)
-        Coefficients.emplace_back(29*1e-6);
-      if(x>=0 && x< 50)
-        Coefficients.emplace_back(32*1e-6);
-      if(x>=50 && x<100)
-        Coefficients.emplace_back(27*1e-6);
-      if(x>=100 && x<150)
-        Coefficients.emplace_back(19*1e-6);
-      if(x>=150 && x<=300)
-        Coefficients.emplace_back(10*1e-6);
-  }
+  // for (auto x : a_ND_vtx_vx_vec){
+  //     // std::cout <<" vtx: "<< x << ",  ";
+  //     if (x<-250)
+  //       Coefficients.emplace_back(69*1e-6);
+  //     if(x>=-250 && x<-200)
+  //       Coefficients.emplace_back(100*1e-6);
+  //     if(x>=-200 && x<-150)
+  //       Coefficients.emplace_back(20*1e-6);
+  //     if(x>=-150 && x<-100)
+  //       Coefficients.emplace_back(25*1e-6);
+  //     if(x>=-100 && x<-50)
+  //       Coefficients.emplace_back(28*1e-6);
+  //     if(x>=-50 && x<0)
+  //       Coefficients.emplace_back(29*1e-6);
+  //     if(x>=0 && x< 50)
+  //       Coefficients.emplace_back(32*1e-6);
+  //     if(x>=50 && x<100)
+  //       Coefficients.emplace_back(27*1e-6);
+  //     if(x>=100 && x<150)
+  //       Coefficients.emplace_back(19*1e-6);
+  //     if(x>=150 && x<=300)
+  //       Coefficients.emplace_back(10*1e-6);
+  // }
 
-  TGraph* GraphCoeffVsVtxX = new TGraph(a_ND_vtx_vx_vec.size(), a_ND_vtx_vx_vec.data(),Coefficients.data());
+  // TGraph* GraphCoeffVsVtxX = new TGraph(a_ND_vtx_vx_vec.size(), a_ND_vtx_vx_vec.data(),Coefficients.data());
 
   // Set Palette
   gStyle->SetPalette(55);
@@ -259,7 +263,12 @@ void NtupleOutVetoAndTrimE_AssumeEqualEffAtAllOA()
 
   // TCanvas** CanvasTrimE = new TCanvas*[nvtxXpositions];
 
-  TCanvas* CanvasEfficiencyVsVtxX[nFDEvents];
+  // save histo with total hadronic energy at FD for all FD events
+  TH1D* hist_FDTotEnergy = new TH1D("hist_FDTotEnergy", "hist_FDTotEnergy", 25000, 0, 25000);
+  //save histo with total neutrino energy at FD for all FD events
+  TH1D* hist_EnuFDEnergy = new TH1D("hist_EnuFDEnergy", "hist_EnuFDEnergy", 25000, 0, 25);
+  // save histo with visible neutrino energy at FD for all FD events
+  TH1D* hist_visEnuFDEnergy = new TH1D("hist_visEnuFDEnergy", "hist_visEnuFDEnergy", 25000, 0, 25);
 
   TGraph* PlotEfficiencyVsVtxX[nFDEvents];
   TGraph* EfficiencyVsOAPos[nFDEvents];
@@ -286,6 +295,12 @@ void NtupleOutVetoAndTrimE_AssumeEqualEffAtAllOA()
           //cout<<" i_iwritten "<<i_iwritten<<" totEnergyFDatND_f " <<totEnergyFDatND_f<<endl;
 
           if ( ND_LAr_vtx_pos == i_ND_LAr_vtx_pos ){
+            if(i_ND_LAr_vtx_pos == -298.55) {//only want to fill the histos for 1 vtxX
+              hist_FDTotEnergy->Fill(totEnergyFDatND_f);
+              hist_EnuFDEnergy->Fill(ND_Gen_numu_E);
+              hist_visEnuFDEnergy->Fill(ND_E_vis_true);
+            }
+
             Int_t i_detposInCoefRange = 0;
             for (Double_t i_ND_LAr_dtctr_pos: a_ND_off_axis_pos_vec)
             {
@@ -297,12 +312,12 @@ void NtupleOutVetoAndTrimE_AssumeEqualEffAtAllOA()
           }
         }
       }
-      cout<<" first loop iwritten: "<<i_iwritten<<endl;
+      //cout<<" first loop iwritten: "<<i_iwritten<<endl;
   }
 
  // start the loop with efficiencies etc
 
-  for (Int_t i_iwritten = 0; i_iwritten<10; i_iwritten++)
+  for (Int_t i_iwritten = 0; i_iwritten<nFDEvents; i_iwritten++)
   {
     cout<<" i_iwritten: "<<i_iwritten<<endl;
     Double_t x_ND_LAr_vtx_pos[ND_vtx_vx_vec_size];
@@ -395,6 +410,7 @@ void NtupleOutVetoAndTrimE_AssumeEqualEffAtAllOA()
 
               PlotEfficiencyVsVtxX[i_iwritten]->SetTitle(Form("TotalFD Energy = %.2f MeV", totEnergyFDatND_f));
 
+
               HistEtrim[i_iwritten][i_vtxX_plot-1]->Scale(ND_GeoEff/nthrowsToLoop);
               HistEtrim[i_iwritten][i_vtxX_plot-1]->GetYaxis()->SetTitle("norm");
               HistEtrim[i_iwritten][i_vtxX_plot-1]->GetXaxis()->SetTitle("FD E_{trim} (MeV)");
@@ -465,6 +481,7 @@ void NtupleOutVetoAndTrimE_AssumeEqualEffAtAllOA()
     HistEtrimAllVtxXTimesCoeff[i_iwritten] = (TH1D*)HistEtrimDetPos[i_iwritten][0][0]->Clone();
     HistEtrimAllVtxXTimesCoeff[i_iwritten]->Reset();
     HistEtrimAllVtxXTimesCoeff[i_iwritten]->SetName(HistEtrimAllVtxXTimesCoeff_name);
+    HistEtrimAllVtxXTimesCoeff[i_iwritten]->SetTitle(Form("TotalFD Energy = %.2f MeV", totEnergyFDatND_f));
 
     // HistEtrimAllVtxXTimesCoeffEq1[i_iwritten] = (TH1D*)HistEtrimDetPosCoeff1[i_iwritten][0][0]->Clone();
     // HistEtrimAllVtxXTimesCoeffEq1[i_iwritten]->Reset();
@@ -498,21 +515,29 @@ void NtupleOutVetoAndTrimE_AssumeEqualEffAtAllOA()
 
 
 
-    cout<<" ndet pos = "<<nDetPos<<endl;
+    // cout<<" ndet pos = "<<nDetPos<<endl;
 
     HistOAPos[i_iwritten]->Write(Form("HistOAPos_FDEvt_%d", i_iwritten));
 
   }//end iwritten
 
-  GraphCoeffVsVtxX->Write("CoefficientsVsVtxX");
+
 
   CoefficientsAtOAPosHist->Write("CoefficientsAtOAPosHist");
   CoefficientsHist->Write("CoefficientsHist");
+//  hist_FDTotEnergy->Scale(1.0/72); // we have 72 vtxX positions therefore instead of 1 event in the histo we have 72 entries
+  hist_FDTotEnergy->Write("hist_FDTotEnergy");
+  hist_EnuFDEnergy->Write("hist_EnuFDEnergy");
+  hist_visEnuFDEnergy->Write("hist_visEnuFDEnergy");
 
   // HistOAPos->Draw("hist");
 
   //FileWithHistoInfo->Write();
   FileWithHistoInfo->Close();
+
+  delete hist_FDTotEnergy;
+  delete hist_EnuFDEnergy;
+  delete hist_visEnuFDEnergy;
 
   cout<<" before delete "<<endl;
 
