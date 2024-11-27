@@ -74,10 +74,10 @@ done
 echo "Got input file: $myinfile"
 
 # Run program
-echo "cd ${_CONDOR_JOB_IWD}/Grid"
-cd ${_CONDOR_JOB_IWD}/Grid
-echo "ls -l ${_CONDOR_JOB_IWD}/Grid"
-ls -l ${_CONDOR_JOB_IWD}/Grid
+echo "cd ${_CONDOR_JOB_IWD}/DUNE_ND_GeoEff/Grid"
+cd ${_CONDOR_JOB_IWD}/DUNE_ND_GeoEff/Grid
+echo "ls -l ${_CONDOR_JOB_IWD}/DUNE_ND_GeoEff/Grid"
+ls -l ${_CONDOR_JOB_IWD}/DUNE_ND_GeoEff/Grid
 echo "./NtupleOutVetoAndTrimE_AssumeEqualEffAtAllOA $myinfile"
 ./NtupleOutVetoAndTrimE_AssumeEqualEffAtAllOA $myinfile
 
