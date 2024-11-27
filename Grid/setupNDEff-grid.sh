@@ -23,10 +23,10 @@ pwd
 # which can't be done in the CVMFS read-only version
 echo "git clone --recurse-submodules -b EtrimAnalysis https://github.com/icaracas/DUNE_ND_GeoEff.git "
 git clone --recurse-submodules -b EtrimAnalysis https://github.com/icaracas/DUNE_ND_GeoEff.git
-echo "cd ${_CONDOR_JOB_IWD}/Grid"
-cd ${_CONDOR_JOB_IWD}/Grid
+echo "cd ${_CONDOR_JOB_IWD}/DUNE_ND_GeoEff/Grid"
+cd ${_CONDOR_JOB_IWD}/DUNE_ND_GeoEff/Grid
 echo "source setup.sh"
-source setup.sh
+source ../setup.sh
 # echo "cmake -DPYTHON_EXECUTABLE:FILEPATH=`which python` ."
 # cmake -DPYTHON_EXECUTABLE:FILEPATH=`which python` .
 # echo "make -j geoEff"
