@@ -299,11 +299,12 @@ int main(int argc, char** argv){
 
 
   TFile* FileWithHistoInfo = new TFile("FileWithHistEtrim_CoeffsAndOAPoswithSameEff.root", "RECREATE");
+  FileWithHistoInfo->cd();
 
   //===want to look only at Event3 with Eff =1 at all Vtx_x for now ====
 
   //first get the weights/distribution of events at OA postions -> later on weight the histograms to these POT-like histo
-  for (Int_t i_iwritten = 0; i_iwritten<10; i_iwritten++)
+  for (Int_t i_iwritten = 0; i_iwritten<nFDEvents; i_iwritten++)
   { HistOAPos[i_iwritten] = new TH1D(Form("HistOAPos_FDEvt_%d", i_iwritten), Form("HistOAPos_FDEvt_%d", i_iwritten), 67, -30.5, 3);
       for (Double_t i_ND_LAr_vtx_pos: a_ND_vtx_vx_vec)
       {
