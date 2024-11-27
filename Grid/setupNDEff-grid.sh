@@ -21,18 +21,18 @@ pwd
 # Copy the untarred folder and remove the CVMFS linked read-only version
 # because recompile need to modify files
 # which can't be done in the CVMFS read-only version
-echo "git clone --recurse-submodules -b FD_Wei https://github.com/FlynnYGUO/DUNE_ND_GeoEff.git "
-git clone --recurse-submodules -b FD_Wei https://github.com/FlynnYGUO/DUNE_ND_GeoEff.git
-echo "cd ${_CONDOR_JOB_IWD}/DUNE_ND_GeoEff"
-cd ${_CONDOR_JOB_IWD}/DUNE_ND_GeoEff
+echo "git clone --recurse-submodules -b EtrimAnalysis https://github.com/icaracas/DUNE_ND_GeoEff.git "
+git clone --recurse-submodules -b EtrimAnalysis https://github.com/icaracas/DUNE_ND_GeoEff.git
+echo "cd ${_CONDOR_JOB_IWD}/Grid"
+cd ${_CONDOR_JOB_IWD}/Grid
 echo "source setup.sh"
 source setup.sh
-echo "cmake -DPYTHON_EXECUTABLE:FILEPATH=`which python` ."
-cmake -DPYTHON_EXECUTABLE:FILEPATH=`which python` .
-echo "make -j geoEff"
-make -j geoEff
+# echo "cmake -DPYTHON_EXECUTABLE:FILEPATH=`which python` ."
+# cmake -DPYTHON_EXECUTABLE:FILEPATH=`which python` .
+# echo "make -j geoEff"
+# make -j geoEff
 
-echo "cd ${_CONDOR_JOB_IWD}/DUNE_ND_GeoEff/app"
-cd ${_CONDOR_JOB_IWD}/DUNE_ND_GeoEff/app
-echo "make runGeoEffFDEvtSim"
-make runGeoEffFDEvtSim
+# echo "cd ${_CONDOR_JOB_IWD}/DUNE_ND_GeoEff/app"
+# cd ${_CONDOR_JOB_IWD}/DUNE_ND_GeoEff/app
+echo "running Etrim analysis: make "
+make

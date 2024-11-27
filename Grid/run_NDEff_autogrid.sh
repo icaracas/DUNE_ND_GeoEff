@@ -4,7 +4,7 @@ echo "Running on $(hostname) at ${GLIDEIN_Site}. GLIDEIN_DUNESite = ${GLIDEIN_DU
 
 # Set the output location for copyback
 #OUTDIR=/pnfs/dune/persistent/users/${GRID_USER}/FDGeoEffinND
-OUTDIR=/pnfs/dune/scratch/users/${GRID_USER}/FDGeoEffinND
+OUTDIR=/pnfs/dune/scratch/users/${GRID_USER}/EtrimAnalysis_FromFDGeoEffinND
 
 # Make sure we see what we expect
 echo "See where are at: pwd"
@@ -67,29 +67,29 @@ myinfile=""
 (( LINE_N = ${PROCESS} + 1 ))
 
 # Loop over ntuple list in txt file
-for ifile in $(cat ${INPUT_TAR_DIR_LOCAL}/myFDntuples.txt | head -${LINE_N} | tail -1); do
+for ifile in $(cat ${INPUT_TAR_DIR_LOCAL}/myOutputFDGeoEff.txt | head -${LINE_N} | tail -1); do
   myinfile=${ifile}
 done
 
 echo "Got input file: $myinfile"
 
 # Run program
-echo "cd ${_CONDOR_JOB_IWD}/DUNE_ND_GeoEff/bin"
-cd ${_CONDOR_JOB_IWD}/DUNE_ND_GeoEff/bin
-echo "ls -l ${_CONDOR_JOB_IWD}/DUNE_ND_GeoEff/bin"
-ls -l ${_CONDOR_JOB_IWD}/DUNE_ND_GeoEff/bin
-echo "./runGeoEffFDEvtSim $myinfile"
-./runGeoEffFDEvtSim $myinfile
+echo "cd ${_CONDOR_JOB_IWD}/Grid"
+cd ${_CONDOR_JOB_IWD}/Grid
+echo "ls -l ${_CONDOR_JOB_IWD}/Grid"
+ls -l ${_CONDOR_JOB_IWD}/Grid
+echo "./NtupleOutVetoAndTrimE_AssumeEqualEffAtAllOA $myinfile"
+./NtupleOutVetoAndTrimE_AssumeEqualEffAtAllOA $myinfile
 
-echo "Finish ./runGeoEffFDEvtSim"
+echo "Finish ./NtupleOutVetoAndTrimE_AssumeEqualEffAtAllOA"
 
 # Unique name in case we send multiple jobs.
-OUTFILE=FDGeoEff_${CLUSTER}_${PROCESS}.root
+OUTFILE=EtrimHistosFile_OAPosSameAsCAFs_${CLUSTER}_${PROCESS}.root
 
 if [ -f Output_FDGeoEff.root ]; then
 
-  echo "mv Output_FDGeoEff.root $OUTFILE"
-  mv Output_FDGeoEff.root $OUTFILE
+  echo "mv FileWithHistEtrim_CoeffsAndOAPoswithSameEff.root $OUTFILE"
+  mv FileWithHistEtrim_CoeffsAndOAPoswithSameEff.root $OUTFILE
 
   # and copy our output file back
   ifdh cp -D $OUTFILE $OUTDIR
