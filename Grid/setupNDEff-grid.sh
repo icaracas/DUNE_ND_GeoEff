@@ -27,8 +27,8 @@ echo "cd ${_CONDOR_JOB_IWD}/DUNE_ND_GeoEff/Grid"
 cd ${_CONDOR_JOB_IWD}/DUNE_ND_GeoEff/Grid
 echo "source setup.sh"
 source ../setup.sh
-# echo "cmake -DPYTHON_EXECUTABLE:FILEPATH=`which python` ."
-# cmake -DPYTHON_EXECUTABLE:FILEPATH=`which python` .
+echo "cmake -DPYTHON_EXECUTABLE:FILEPATH=`which python` ."
+cmake -DPYTHON_EXECUTABLE:FILEPATH=`which python` .
 # echo "make -j geoEff"
 # make -j geoEff
 
