@@ -84,12 +84,12 @@ echo "./NtupleOutVetoAndTrimE_AssumeEqualEffAtAllOA $myinfile"
 echo "Finish ./NtupleOutVetoAndTrimE_AssumeEqualEffAtAllOA"
 
 # Unique name in case we send multiple jobs.
-OUTFILE=EtrimHistosFile_OAPosSameAsCAFs_${CLUSTER}_${PROCESS}.root
+OUTFILE=EtrimHistosFile_CoeffsNoOsc_OAPosSameAsCAFs_${CLUSTER}_${PROCESS}.root
 
-if [ -f FileWithHistEtrim_CoeffsAndOAPoswithSameEff.root ]; then
+if [ -f FileWithHistEtrim_CoeffsNoOscSpectrumAndOAPoswithSameEff.root ]; then
 
-  echo "mv FileWithHistEtrim_CoeffsAndOAPoswithSameEff.root $OUTFILE"
-  mv FileWithHistEtrim_CoeffsAndOAPoswithSameEff.root $OUTFILE
+  echo "mv FileWithHistEtrim_CoeffsNoOscSpectrumAndOAPoswithSameEff.root $OUTFILE"
+  mv FileWithHistEtrim_CoeffsNoOscSpectrumAndOAPoswithSameEff.root $OUTFILE
 
   # and copy our output file back
   ifdh cp -D $OUTFILE $OUTDIR
