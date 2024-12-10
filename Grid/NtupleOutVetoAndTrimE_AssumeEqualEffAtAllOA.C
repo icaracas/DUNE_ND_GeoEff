@@ -90,7 +90,7 @@ int main(int argc, char** argv){
   gROOT->Reset();
   //gStyle->SetOptStat(0); // Remove Stat Box
   //File with coefficients histogram
-  TFile* FileWithCoeffs = new TFile("FileWithCoeffsNuMu.root", "READ");
+  TFile* FileWithCoeffs = new TFile("FileWithCoeffsNuMuNoOscSpectrum.root", "READ");
   FileWithCoeffs->cd();
   TH1D* CoefficientsHist = (TH1D*) FileWithCoeffs->Get("CoeffPRISMUpTo3mOA");
   CoefficientsHist->SetDirectory(0);
@@ -298,7 +298,7 @@ int main(int argc, char** argv){
   TH2D* CoefficientsAtOAPosHist = new TH2D("CoefficientsAtOAPosHist", "CoefficientsAtOAPosHist", 67, -30.5, 3, 60, -0.3, 0.3);
 
 
-  TFile* FileWithHistoInfo = new TFile("FileWithHistEtrim_CoeffsAndOAPoswithSameEff.root", "RECREATE");
+  TFile* FileWithHistoInfo = new TFile("FileWithHistEtrim_CoeffsNoOscSpectrumAndOAPoswithSameEff.root", "RECREATE");
   FileWithHistoInfo->cd();
 
   //===want to look only at Event3 with Eff =1 at all Vtx_x for now ====
