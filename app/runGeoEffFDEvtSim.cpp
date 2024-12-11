@@ -131,6 +131,7 @@ int main(int argc, char** argv)
   double FD_Sim_mu_end_pz; // Momentum of the muon trajectory at end point on the z-axis [GeV]
   double FD_Sim_mu_end_E; // Energy of leading mu at end point [GeV]
   double FD_Sim_hadronic_Edep_b2; // Total amount of energy released by ionizations in the event (from Geant4 simulation) [MeV]
+  double FD_Sim_mu_Edep_b2; // Muon energy deposit: total amount of energy released by ionizations in the event (from Geant 4 sim) [MeV]
   int FD_Sim_n_hadronic_Edep_b; // # of hadronic energy deposits
   vector<float> *FD_Sim_hadronic_hit_Edep_b2 = 0; // Need initialize 0 here to avoid error
   vector<float> *FD_Sim_hadronic_hit_x_b = 0; // Position of each energy deposit on the x-axis [cm]
@@ -173,6 +174,7 @@ int main(int argc, char** argv)
   t->SetBranchAddress("Sim_hadronic_hit_x_b",     &FD_Sim_hadronic_hit_x_b);
   t->SetBranchAddress("Sim_hadronic_hit_y_b",     &FD_Sim_hadronic_hit_y_b);
   t->SetBranchAddress("Sim_hadronic_hit_z_b",     &FD_Sim_hadronic_hit_z_b);
+  t->SetBranchAddress("Sim_mu_Edep_b2",           &FD_Sim_mu_Edep_b2);
   //
   //------------------------------------------------------------------------------
   //------------------------------------------------------------------------------
@@ -594,6 +596,7 @@ int main(int argc, char** argv)
   float vetoEnergyFDatND_float;
   float outEnergyFDatND_float;
   float totEnergyFDatND_float;
+  double muonEdep;
 
   TTree *effValues = new TTree("effValues", "ND eff Tree");
   effValues->Branch("iwritten",                     &iwritten,             "iwritten/I");
@@ -603,6 +606,7 @@ int main(int argc, char** argv)
   effValues->Branch("vetoEnergyFDatND_f",           &vetoEnergyFDatND_float,           "vetoEnergyFDatND_float/F");
   effValues->Branch("outEnergyFDatND_f",            &outEnergyFDatND_float,            "outEnergyFDatND_float/F");
   effValues->Branch("totEnergyFDatND_f",            &totEnergyFDatND_float,            "totEnergyFDatND_float/F");
+  effValues->Branch("muonEdep_f",                   &muonEdep,             "muondEDep/D");
   effValues->Branch("ND_OffAxis_MeanEff",           &ND_OffAxis_MeanEff,   "ND_OffAxis_MeanEff/D");
   effValues->Branch("ThrowResults",                         &ThrowResults);
   effValues->Branch("VetoEnergyEventsPass",         &VetoEnergyEventsPass);
@@ -723,7 +727,7 @@ int main(int argc, char** argv)
   if (throwfileVerbose) myfile << "Tot evts: " << nentries << "\n";
   if (hadronhitVerbose) myfile << "Tot evts: " << nentries << "\n";
   for ( int ientry = 0; ientry < nentries; ientry++ )
-  //for ( int ientry = 54; ientry < 55; ientry++ ) // Use for drwaing one hardronic hits plots
+  //for ( int ientry = 55; ientry < 56; ientry++ ) // Use for drwaing one hardronic hits plots
   {  
     
     t->GetEntry(ientry);
@@ -1155,6 +1159,7 @@ int main(int argc, char** argv)
         vetoEnergyFDatND_float = 0.;
         totEnergyFDatND_float = 0.;
         outEnergyFDatND_float = 0.;
+        muonEdep = FD_Sim_mu_Edep_b2; //Deposited Energy of muon [MeV] 
     
         // ND_OffAxis_Sim_hadronic_hit
         for ( int ihadronhit = 0; ihadronhit < FD_Sim_n_hadronic_Edep_b; ihadronhit++ )
@@ -1384,7 +1389,7 @@ int main(int argc, char** argv)
                        VetoEnergyEventsPass.emplace_back(vetoEThrow[0][0][(counter5-1)*64 + ithrow]);
                        TrimEnergyEventsPass.emplace_back(trimEThrow[0][0][(counter5-1)*64 + ithrow]);
                        TotalEnergyEventsPass.emplace_back(eff->getCurrentThrowsTotE());
-                       /*if(i_vtx_vx == 7.75){
+                       /*if(i_vtx_vx == 270.55){
                          CurrentThrowDepsX.emplace_back(eff->getCurrentThrowDepsX((counter5-1)*64 + ithrow));
                          CurrentThrowDepsY.emplace_back(eff->getCurrentThrowDepsY((counter5-1)*64 + ithrow));
                          CurrentThrowDepsZ.emplace_back(eff->getCurrentThrowDepsZ((counter5-1)*64 + ithrow));
@@ -1394,6 +1399,17 @@ int main(int argc, char** argv)
                        //VtxYEventsPass = eff->getCurrentThrowTranslationsY();
                        //VtxZEventsPass = eff->getCurrentThrowTranslationsZ();
                     }
+		    // save hadron signature for event not passing
+		    /*if ( throw_result == 0 ) {
+		      if(i_vtx_vx == 246.95){
+                         CurrentThrowDepsX.emplace_back(eff->getCurrentThrowDepsX((counter5-1)*64 + ithrow));
+                         CurrentThrowDepsY.emplace_back(eff->getCurrentThrowDepsY((counter5-1)*64 + ithrow));
+                         CurrentThrowDepsZ.emplace_back(eff->getCurrentThrowDepsZ((counter5-1)*64 + ithrow));
+                         CurrentThrowTotE.emplace_back(eff->getCurrentThrowsTotE());
+                         std::cout<<" iwritten: "<<iwritten<<std::endl;
+                       }
+	    
+		    } //end if for events failing*/
 
                 } // end if FD event passed ND FV cut
 
