@@ -90,7 +90,9 @@ int main(int argc, char** argv){
   gROOT->Reset();
   //gStyle->SetOptStat(0); // Remove Stat Box
   //File with coefficients histogram
-  TFile* FileWithCoeffs = new TFile("FileWithCoeffsNuMu.root", "READ");
+  //TFile* FileWithCoeffs = new TFile("FileWithCoeffsNuMu.root", "READ");
+  //File with coefficients histogram no osc scenario
+  TFile* FileWithCoeffs = new TFile("FileWithCoeffsNuMuNoOsc.root", "READ");
   FileWithCoeffs->cd();
   TH1D* CoefficientsHist = (TH1D*) FileWithCoeffs->Get("CoeffPRISMUpTo3mOA");
   CoefficientsHist->SetDirectory(0);
