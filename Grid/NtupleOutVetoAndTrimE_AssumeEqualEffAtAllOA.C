@@ -132,6 +132,7 @@ int main(int argc, char** argv){
   //hardon info
   TChain *t_effTree = new TChain("effTreeND");
   Float_t totEnergyFDatND_f;
+  double muonEdep_f;
   t_effTree->Add(FileIn.Data());
   int ND_Sim_n_hadronic_Edep_b;
   vector<float> *HadronHitEdeps =0; // Hadron hit segment energy deposits [MeV]
@@ -153,6 +154,7 @@ int main(int argc, char** argv){
   t_effTree->SetBranchAddress("ND_E_vis_true",             &ND_E_vis_true);
   t_effTree->SetBranchAddress("ND_Gen_numu_E",             &ND_Gen_numu_E);
   t_effValues->SetBranchAddress("totEnergyFDatND_f",   &totEnergyFDatND_f);
+  t_effValues->SetBranchAddress("muonEdep_f",              &muonEdep_f);
   // t_effTree->SetBranchAddress("ND_OffAxis_Sim_hadronic_hit_xyz",            &ND_OffAxis_Sim_hadronic_hit_xyz);
 
 
@@ -272,12 +274,19 @@ int main(int argc, char** argv){
   cout<<" nFDEvents = "<<nFDEvents<<" nXpos = "<<nvtxXpositions<<endl;
 
   TH1D* HistVetoE[nFDEvents][nvtxXpositions];
+  // all of these histo are for saving the Etrim distributions
   TH1D* HistEtrim[nFDEvents][nvtxXpositions];
   TH1D* HistEtrimDetPos[nFDEvents][nvtxXpositions][nDetPos];
-  TH1D* HistEtrimDetPosCoeff1[nFDEvents][nvtxXpositions][nDetPos];
   TH1D* HistEtrimAllVtxX[nFDEvents];
   TH1D* HistEtrimAllVtxXTimesCoeff[nFDEvents];
-  TH1D* HistOAPosVtxX[nFDEvents][nvtxXpositions];
+  // TH1D* HistOAPosVtxX[nFDEvents][nvtxXpositions];
+
+  // make similar histos for saving the VisEtrim = Etrim + Emu distributions
+  TH1D* HistVisEtrim[nFDEvents][nvtxXpositions];
+  TH1D* HistVisEtrimDetPos[nFDEvents][nvtxXpositions][nDetPos];
+  TH1D* HistVisEtrimAllVtxX[nFDEvents];
+  TH1D* HistVisEtrimAllVtxXTimesCoeff[nFDEvents];
+
 
 
 
@@ -290,6 +299,8 @@ int main(int argc, char** argv){
   TH1D* hist_EnuFDEnergy = new TH1D("hist_EnuFDEnergy", "hist_EnuFDEnergy", 25000, 0, 25);
   // save histo with visible neutrino energy at FD for all FD events
   TH1D* hist_visEnuFDEnergy = new TH1D("hist_visEnuFDEnergy", "hist_visEnuFDEnergy", 25000, 0, 25);
+  //save histo with muon EDep
+  TH1D* hist_muonEdep = new TH1D("hist_muonEdep", "hist_muonEdep", 25000, 0, 25000 );
 
   TGraph* PlotEfficiencyVsVtxX[nFDEvents];
   TGraph* EfficiencyVsOAPos[nFDEvents];
@@ -298,7 +309,7 @@ int main(int argc, char** argv){
   TH2D* CoefficientsAtOAPosHist = new TH2D("CoefficientsAtOAPosHist", "CoefficientsAtOAPosHist", 67, -30.5, 3, 60, -0.3, 0.3);
 
 
-  TFile* FileWithHistoInfo = new TFile("FileWithHistEtrim_CoeffsAndOAPoswithSameEff.root", "RECREATE");
+  TFile* FileWithHistoInfo = new TFile("FileWithHistEtrim_CoeffsNoOscAndOAPoswithSameEff_saveMuonEdep.root", "RECREATE");
   FileWithHistoInfo->cd();
 
   //===want to look only at Event3 with Eff =1 at all Vtx_x for now ====
@@ -321,6 +332,7 @@ int main(int argc, char** argv){
               hist_FDTotEnergy->Fill(totEnergyFDatND_f);
               hist_EnuFDEnergy->Fill(ND_Gen_numu_E);
               hist_visEnuFDEnergy->Fill(ND_E_vis_true);
+              hist_muonEdep->Fill(muonEdep_f);
             }
 
             Int_t i_detposInCoefRange = 0;
@@ -352,6 +364,11 @@ int main(int argc, char** argv){
     TString HistEtrimAllVtxXTimesCoeff_name = Form("HistEtrimAllVtxXTimesCoeff_FDEvt_%d", i_iwritten);
     HistEtrimAllVtxXTimesCoeff[i_iwritten] = new TH1D(HistEtrimAllVtxXTimesCoeff_name, HistEtrimAllVtxXTimesCoeff_name, 25000, 0, 25000);
 
+    TString HistVisEtrimAllVtxX_name = Form("HistVisEtrimAllVtxX_FDEvt_%d", i_iwritten);
+    HistVisEtrimAllVtxX[i_iwritten] = new TH1D(HistVisEtrimAllVtxX_name, HistVisEtrimAllVtxX_name, 25000, 0, 25000);
+    TString HistVisEtrimAllVtxXTimesCoeff_name = Form("HistVisEtrimAllVtxXTimesCoeff_FDEvt_%d", i_iwritten);
+    HistVisEtrimAllVtxXTimesCoeff[i_iwritten] = new TH1D(HistVisEtrimAllVtxXTimesCoeff_name, HistVisEtrimAllVtxXTimesCoeff_name, 25000, 0, 25000);
+
 
 
     Int_t n_plot = 0;
@@ -373,8 +390,11 @@ int main(int argc, char** argv){
         TString HistEtrim_name = Form("HistEtrim_FDEvt_%d_vtxXpost_%f", i_iwritten, i_ND_LAr_vtx_pos);
         HistEtrim[i_iwritten][i_vtxX_plot-1] = new TH1D(HistEtrim_name, HistEtrim_name, 25000, 0, 25000);
 
-        TString HistOAPosVtxX_name = Form("HistOAPosVtxX_FDEvt_%d_vtxXpost_%f", i_iwritten, i_ND_LAr_vtx_pos);
-        HistOAPosVtxX[i_iwritten][i_vtxX_plot-1] = new TH1D(HistOAPosVtxX_name, HistOAPosVtxX_name, 72, -300, 300);
+        TString HistVisEtrim_name = Form("HistVisEtrim_FDEvt_%d_vtxXpost_%f", i_iwritten, i_ND_LAr_vtx_pos);
+        HistVisEtrim[i_iwritten][i_vtxX_plot-1] = new TH1D(HistVisEtrim_name, HistVisEtrim_name, 25000, 0, 25000);
+
+        // TString HistOAPosVtxX_name = Form("HistOAPosVtxX_FDEvt_%d_vtxXpost_%f", i_iwritten, i_ND_LAr_vtx_pos);
+        // HistOAPosVtxX[i_iwritten][i_vtxX_plot-1] = new TH1D(HistOAPosVtxX_name, HistOAPosVtxX_name, 72, -300, 300);
 
         // cout<<" coeff: "<<Coefficients[i_vtxX_plot-1]<<endl;
         Int_t i_detpos_Hist=0;
@@ -423,8 +443,10 @@ int main(int argc, char** argv){
                 // HistVetoE[i_iwritten][i_vtxX_plot-1]->Fill(CurrentThrowvetoEnergyND);
                   // cout<<" tot energy: "<<CurrentThrowTotE->at(ithrow)<<endl;
                 HistEtrim[i_iwritten][i_vtxX_plot-1]->Fill(TrimEnergyEventsPass->at(ithrow));
+                HistVisEtrim[i_iwritten][i_vtxX_plot-1]->Fill(TrimEnergyEventsPass->at(ithrow) + muonEdep_f);
                 // cout<<" fil hit : "<<TrimEnergyEventsPass->at(ithrow)<<endl;
                 HistEtrimAllVtxX[i_iwritten]->Fill(TrimEnergyEventsPass->at(ithrow), ND_GeoEff/(nthrowsToLoop*a_ND_vtx_vx_vec.size()));
+                HistVisEtrimAllVtxX[i_iwritten]->Fill(TrimEnergyEventsPass->at(ithrow) + muonEdep_f, ND_GeoEff/(nthrowsToLoop*a_ND_vtx_vx_vec.size()));
 
 
               } //end throw
@@ -436,6 +458,11 @@ int main(int argc, char** argv){
               HistEtrim[i_iwritten][i_vtxX_plot-1]->Scale(ND_GeoEff/nthrowsToLoop);
               HistEtrim[i_iwritten][i_vtxX_plot-1]->GetYaxis()->SetTitle("norm");
               HistEtrim[i_iwritten][i_vtxX_plot-1]->GetXaxis()->SetTitle("FD E_{trim} (MeV)");
+
+              HistVisEtrim[i_iwritten][i_vtxX_plot-1]->Scale(ND_GeoEff/nthrowsToLoop);
+              HistVisEtrim[i_iwritten][i_vtxX_plot-1]->GetYaxis()->SetTitle("norm");
+              HistVisEtrim[i_iwritten][i_vtxX_plot-1]->GetXaxis()->SetTitle("Vis E_{trim} (MeV)");
+
               // HistEtrim[i_iwritten][i_vtxX_plot-1]->Draw("hist");
               //here loop over DetPos here -> for now just assume same efficiency at every det position..
               Int_t i_detpos = 0;
@@ -477,13 +504,22 @@ int main(int argc, char** argv){
                 HistEtrimDetPos[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Write(HistEtrimDetPos[i_iwritten][i_vtxX_plot-1][i_detpos-1]->GetName());
 
 
+                TString HistVisEtrimDetPos_name = Form("HistVisEtrim_FDEvt_%d_vtxXpost_%f_DetPos_%f", i_iwritten, i_ND_LAr_vtx_pos, a_ND_off_axis_pos_vec[i_detpos-1] );
+                HistVisEtrimDetPos[i_iwritten][i_vtxX_plot-1][i_detpos-1] = (TH1D*) HistVisEtrim[i_iwritten][i_vtxX_plot-1]->Clone();
+                HistVisEtrimDetPos[i_iwritten][i_vtxX_plot-1][i_detpos-1]->SetName(HistVisEtrimDetPos_name);
+
+                //multiply histo by coefficients value and weight to the nr of entries (i.e how many Etrim histograms in a given OA pos with 0.5 cm width)
+                HistVisEtrimDetPos[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale(CoefficientsAtOAPos * 1.0/WeightEventsAtOaPos);
+                HistVisEtrimDetPos[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Write(HistVisEtrimDetPos[i_iwritten][i_vtxX_plot-1][i_detpos-1]->GetName());
 
 
 
               }//end LAr pos
 
               HistEtrim[i_iwritten][i_vtxX_plot-1]->Write(HistEtrim[i_iwritten][i_vtxX_plot-1]->GetName());
+              HistVisEtrim[i_iwritten][i_vtxX_plot-1]->Write(HistVisEtrim[i_iwritten][i_vtxX_plot-1]->GetName());
               delete HistEtrim[i_iwritten][i_vtxX_plot-1];
+              delete HistVisEtrim[i_iwritten][i_vtxX_plot-1];
 
             //  cout<<" integral: "<<HistEtrim[i_iwritten][i_vtxX_plot-1]->Integral()<< " nd geo: "<<ND_GeoEff;
           }// end vtx selection
@@ -499,11 +535,17 @@ int main(int argc, char** argv){
     PlotEfficiencyVsVtxX[i_iwritten]->Write(Form("GraphEffficiency_FDEventNr_%d",i_iwritten));
     EfficiencyVsOAPos[i_iwritten]->Write(Form("GraphEffficiency_AllNDDetPos_FDEventNr_%d",i_iwritten));
     HistEtrimAllVtxX[i_iwritten]->Write(HistEtrimAllVtxX[i_iwritten]->GetName());
+    HistVisEtrimAllVtxX[i_iwritten]->Write(HistVisEtrimAllVtxX[i_iwritten]->GetName());
 
     HistEtrimAllVtxXTimesCoeff[i_iwritten] = (TH1D*)HistEtrimDetPos[i_iwritten][0][0]->Clone();
     HistEtrimAllVtxXTimesCoeff[i_iwritten]->Reset();
     HistEtrimAllVtxXTimesCoeff[i_iwritten]->SetName(HistEtrimAllVtxXTimesCoeff_name);
     HistEtrimAllVtxXTimesCoeff[i_iwritten]->SetTitle(Form("TotalFD Energy = %.2f MeV", totEnergyFDatND_f));
+
+    HistVisEtrimAllVtxXTimesCoeff[i_iwritten] = (TH1D*)HistVisEtrimDetPos[i_iwritten][0][0]->Clone();
+    HistVisEtrimAllVtxXTimesCoeff[i_iwritten]->Reset();
+    HistVisEtrimAllVtxXTimesCoeff[i_iwritten]->SetName(HistVisEtrimAllVtxXTimesCoeff_name);
+    HistVisEtrimAllVtxXTimesCoeff[i_iwritten]->SetTitle(Form("TotalFD Energy = %.2f MeV", totEnergyFDatND_f));
 
     // HistEtrimAllVtxXTimesCoeffEq1[i_iwritten] = (TH1D*)HistEtrimDetPosCoeff1[i_iwritten][0][0]->Clone();
     // HistEtrimAllVtxXTimesCoeffEq1[i_iwritten]->Reset();
@@ -514,6 +556,7 @@ int main(int argc, char** argv){
       for(int iDetPos = 0; iDetPos < nDetPos; iDetPos++){
         if(HistEtrimDetPos[i_iwritten][ivtxX][iDetPos]->GetEntries() > 0){
           HistEtrimAllVtxXTimesCoeff[i_iwritten]->Add(HistEtrimDetPos[i_iwritten][ivtxX][iDetPos]);
+          HistVisEtrimAllVtxXTimesCoeff[i_iwritten]->Add(HistVisEtrimDetPos[i_iwritten][ivtxX][iDetPos]);
         }
         // if(HistEtrimDetPosCoeff1[i_iwritten][ivtxX][iDetPos]->GetEntries() > 0)
         //   HistEtrimAllVtxXTimesCoeffEq1[i_iwritten]->Add(HistEtrimDetPosCoeff1[i_iwritten][ivtxX][iDetPos]);
@@ -524,14 +567,18 @@ int main(int argc, char** argv){
 
             //cout<<"ivtxx: "<<ivtxX<< " iDetPos "<< iDetPos<<" mean: "<<HistEtrimDetPos[i_iwritten][ivtxX][iDetPos]->GetMean()<<endl;
             delete HistEtrimDetPos[i_iwritten][ivtxX][iDetPos];
+            delete HistVisEtrimDetPos[i_iwritten][ivtxX][iDetPos];
 
       }
     }
+
+    cout<<" mu energy = "<<muonEdep_f<<endl;
 
     // HistEtrimAllVtxXTimesCoeff[i_iwritten]->Scale(1.0/(nDetPos));
     cout<<" total DetPos: "<<nDetPos<<endl;
 
     HistEtrimAllVtxXTimesCoeff[i_iwritten]->Write(HistEtrimAllVtxXTimesCoeff[i_iwritten]->GetName());
+    HistVisEtrimAllVtxXTimesCoeff[i_iwritten]->Write(HistVisEtrimAllVtxXTimesCoeff[i_iwritten]->GetName());
 
     // HistEtrimAllVtxXTimesCoeffEq1[i_iwritten]->Write("HistEtrimAllVtxXTimesCoeffEq1");
 
@@ -551,6 +598,7 @@ int main(int argc, char** argv){
   hist_FDTotEnergy->Write("hist_FDTotEnergy");
   hist_EnuFDEnergy->Write("hist_EnuFDEnergy");
   hist_visEnuFDEnergy->Write("hist_visEnuFDEnergy");
+  hist_muonEdep->Write("hist_muonEdep");
 
   // HistOAPos->Draw("hist");
 
@@ -560,8 +608,9 @@ int main(int argc, char** argv){
   delete hist_FDTotEnergy;
   delete hist_EnuFDEnergy;
   delete hist_visEnuFDEnergy;
+  delete hist_muonEdep;
 
-  cout<<" before delete "<<endl;
+
 
 
   // delete all canvas
