@@ -4,7 +4,7 @@ echo "Running on $(hostname) at ${GLIDEIN_Site}. GLIDEIN_DUNESite = ${GLIDEIN_DU
 
 # Set the output location for copyback
 #OUTDIR=/pnfs/dune/persistent/users/${GRID_USER}/myFDntuples
-OUTDIR=/pnfs/dune/scratch/users/${GRID_USER}/NDeff_FDhadron
+OUTDIR=/pnfs/dune/scratch/users/${GRID_USER}/FDGeoEffinND/MuonEff/Resub
 
 # Make sure we see what we expect
 echo "See where are at: pwd" # this normally is _CONDOR_JOB_IWD
@@ -34,17 +34,24 @@ echo "cd _CONDOR_JOB_IWD: ${_CONDOR_JOB_IWD}"
 cd ${_CONDOR_JOB_IWD}
 
 echo "Install dependencies"
-echo "pip install --target=${_CONDOR_JOB_IWD} uproot"
-pip install --target=${_CONDOR_JOB_IWD} uproot==5.3.1
+echo "pip3 install --target=${_CONDOR_JOB_IWD} numpy==1.26.1"
+/cvmfs/larsoft.opensciencegrid.org/products/python/v3_9_15/Linux64bit+3.10-2.17/bin/pip install --target=${_CONDOR_JOB_IWD} numpy==1.26.1
+echo "pip3 install --target=${_CONDOR_JOB_IWD} uproot"
+/cvmfs/larsoft.opensciencegrid.org/products/python/v3_9_15/Linux64bit+3.10-2.17/bin/pip install --target=${_CONDOR_JOB_IWD} uproot==5.1.2
 # echo "pip install --target=${_CONDOR_JOB_IWD} uproot4"
 # pip install --target=${_CONDOR_JOB_IWD} uproot4
 # echo "pip install --target=${_CONDOR_JOB_IWD} uproot3"
 # pip install --target=${_CONDOR_JOB_IWD} uproot3
-echo "pip install --target=${_CONDOR_JOB_IWD} torch"
-pip install --target=${_CONDOR_JOB_IWD} torch
-echo "pip install --target=${_CONDOR_JOB_IWD} scipy"
-pip install --target=${_CONDOR_JOB_IWD} scipy
+echo "/cvmfs/larsoft.opensciencegrid.org/products/python/v3_9_15/Linux64bit+3.10-2.17/bin/pip install --target=${_CONDOR_JOB_IWD} torch"
+/cvmfs/larsoft.opensciencegrid.org/products/python/v3_9_15/Linux64bit+3.10-2.17/bin/pip install --target=${_CONDOR_JOB_IWD} torch
 
+echo "pip3 install --target=${_CONDOR_JOB_IWD} scipy==1.11.3"
+/cvmfs/larsoft.opensciencegrid.org/products/python/v3_9_15/Linux64bit+3.10-2.17/bin/pip install --target=${_CONDOR_JOB_IWD} scipy==1.11.3
+
+echo "python version: "
+python --version
+python -c "import numpy; import scipy; print(numpy.__version__, scipy.__version__)"
+/cvmfs/larsoft.opensciencegrid.org/products/python/v3_9_15/Linux64bit+3.10-2.17/bin/pip show uproot
 
 export PYTHONPATH=${_CONDOR_JOB_IWD}:$PYTHONPATH
 
@@ -101,7 +108,7 @@ echo "ls -l _CONDOR_JOB_IWD"
 ls -l ${_CONDOR_JOB_IWD}
 
 echo "python3 FD_maketree.py ./*.root"
-python3 FD_maketree.py ./*.root
+/cvmfs/larsoft.opensciencegrid.org/products/python/v3_9_15/Linux64bit+3.10-2.17/bin/python3 FD_maketree.py ./*.root
 LAR_RESULT=$?   # check the exit status!!!
 
 if [ $LAR_RESULT -ne 0 ]; then
@@ -116,7 +123,7 @@ ls -l ${_CONDOR_JOB_IWD}
 
 # Unique name in case we send multiple jobs.
 # OUTFILE=FDGeoEff_${CLUSTER}_${PROCESS}.root
-OUTFILE=${inputfile}_Eff.root
+OUTFILE=${inputfile}_MuCombinedEff.root
 
 if [ -f Output_FDGeoEff.root ]; then
 

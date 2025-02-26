@@ -460,11 +460,9 @@ def processFiles(f):
 
             #effs_selected=np.reciprocal(np.reciprocal(effs_contained)+np.reciprocal(effs_tracker))
 
+            print ("before event_data")
 
-            event_data=tree.newtree("event_data",{#'NuMomX':np.float64,
-                                                 #'NuMomY':np.float64,
-                                                 #'NuMomZ':np.float64,
-                                                 'isCC':np.int32,
+            event_data=tree.newtree("event_data",{'isCC':np.int32,
                                                  'inFV':np.int32,
                                                  'LepPDG':np.int32,
                                                  'vtx_x':np.float64,
@@ -472,14 +470,11 @@ def processFiles(f):
                                                  'Ev':np.float64,
                                                  'E_vis_true':np.float64,
                                                  'W':np.float64,
-                                                 #'LepE':np.float64,
-                                                 #'LepNuAngle':np.float64,
                                                  'cos_LepNuAngle':np.float64,
                                                  'LepMomTot':np.float64,
                                                  'LongMom':np.float64,
                                                  'muon_contained_eff':np.float64,
                                                  'muon_tracker_eff':np.float64,
-                                                 #'muon_selected_eff':np.float64,
                                                  'hadron_selected_eff':np.float64,
                                                  'combined_eff':np.float64,
                                                  'hadron_selected':np.float64,
@@ -511,6 +506,7 @@ def processFiles(f):
                 'combined': filtered_sel_combined
             }
             tree["event_data"].extend(extend_dict)
+            print ("before main")
 
 
 if __name__ == "__main__" :
