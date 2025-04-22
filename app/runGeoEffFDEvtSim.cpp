@@ -291,10 +291,16 @@ int main(int argc, char** argv)
   // }
 
   // Generate six evenly spaced point in each non-dead region
+  // vector<pair<double, double>> non_dead_regions = {
+  //     {-300, -256.55}, {-253.95, -204.95}, {-203.45, -154.45}, {-151.85, -102.85},
+  //     {-101.35, -52.35}, {-49.75, -0.75}, {0.75, 49.75}, {52.35, 101.35},
+  //     {102.85, 151.85}, {154.45, 203.45}, {204.95, 253.95}, {256.55, 300}
+  // };
+  //for NDFV -200, 200
   vector<pair<double, double>> non_dead_regions = {
-      {-300, -256.55}, {-253.95, -204.95}, {-203.45, -154.45}, {-151.85, -102.85},
+      {-203.45, -154.45}, {-151.85, -102.85},
       {-101.35, -52.35}, {-49.75, -0.75}, {0.75, 49.75}, {52.35, 101.35},
-      {102.85, 151.85}, {154.45, 203.45}, {204.95, 253.95}, {256.55, 300}
+      {102.85, 151.85}, {154.45, 203.45}
   };
 
   // Iterate over each non-dead region and generate points
@@ -499,7 +505,7 @@ int main(int argc, char** argv)
     vector<vector<float>> CurrentThrowDepsZ; // Coordinates of hadron hits Z after random throws
     vector<float> CurrentThrowTotE;
 
-  
+
   //------------------------------------------------------------------------------
   //------------------------------------------------------------------------------
   //------------------------------------------------------------------------------
@@ -616,7 +622,7 @@ int main(int argc, char** argv)
   effValues->Branch("VtxZEventsPass",               &VtxZEventsPass);
   effValues->Branch("validThrows",         &validThrows);
   effValues->Branch("NPassedThrows",        &NPassedThrows);
-  
+
 
 
   //
@@ -728,8 +734,8 @@ int main(int argc, char** argv)
   if (hadronhitVerbose) myfile << "Tot evts: " << nentries << "\n";
   for ( int ientry = 0; ientry < nentries; ientry++ )
   //for ( int ientry = 55; ientry < 56; ientry++ ) // Use for drwaing one hardronic hits plots
-  {  
-    
+  {
+
     t->GetEntry(ientry);
     //if(FD_Gen_numu_E > 6 && FD_Gen_numu_E<15)
     {
@@ -1159,8 +1165,8 @@ int main(int argc, char** argv)
         vetoEnergyFDatND_float = 0.;
         totEnergyFDatND_float = 0.;
         outEnergyFDatND_float = 0.;
-        muonEdep = FD_Sim_mu_Edep_b2; //Deposited Energy of muon [MeV] 
-    
+        muonEdep = FD_Sim_mu_Edep_b2; //Deposited Energy of muon [MeV]
+
         // ND_OffAxis_Sim_hadronic_hit
         for ( int ihadronhit = 0; ihadronhit < FD_Sim_n_hadronic_Edep_b; ihadronhit++ )
         {
@@ -1297,7 +1303,7 @@ int main(int argc, char** argv)
 
 
         if (throwfileVerbose) myfile << "i_ND_off_axis_pos: " << i_ND_off_axis_pos << " cm, vtx x #" << vtx_vx_counter << ": " << i_vtx_vx << " cm, throw result[0][0][0]: " << hadron_throw_result[0][0][0] << "\n";
-        //if (verbose) 
+        //if (verbose)
         //cout << "iwritten: " << iwritten << ", i_ND_off_axis_pos: " << i_ND_off_axis_pos << " cm, vtx x #" << vtx_vx_counter << ": " << i_vtx_vx << " cm, throw result[0][0][0]: " << hadron_throw_result[0][0][0] << "hadron_trhow result[0][0][4096]: "<<hadron_throw_result[0][0][4095]<<" veto E_0: "<<vetoEThrow[0][0][0]<<endl;//<<" veto E _4095 "<<vetoEThrow[0][0][4095]<<"\n";
         // Get the coordinates of hadron hits after eigen transformation, i is the # of throw
 
@@ -1319,11 +1325,11 @@ int main(int argc, char** argv)
         VtxYEventsPass.reserve(64*64);
         VtxZEventsPass.clear();
         VtxZEventsPass.reserve(64*64);
-        
+
         for ( vector<vector<vector<uint64_t> > >::iterator it_veto_size = hadron_throw_result.begin(); it_veto_size != hadron_throw_result.end(); ++it_veto_size )
-        { 
+        {
           for ( vector<vector<uint64_t> >::iterator it_veto_energy = it_veto_size->begin(); it_veto_energy != it_veto_size->end(); ++it_veto_energy )
-          { 
+          {
 
             // Every 64 throw result is a chunk
             // current test case: each evt has 128 throws, so 2 chunks
@@ -1336,12 +1342,12 @@ int main(int argc, char** argv)
             for ( vector<uint64_t>::iterator it_chunk = it_veto_energy->begin(); it_chunk != it_veto_energy->end(); ++it_chunk )
             {
               counter5++;
-	     
-              //if (verbose) 
+
+              //if (verbose)
               //cout << "i_ND_off_axis_pos: " << i_ND_off_axis_pos << " cm, vtx x #" << vtx_vx_counter << ": " << i_vtx_vx << " cm, it_chunk " << counter5<< endl;
-              //if (verbose) 
+              //if (verbose)
               //std::cout << "          chunk #" << counter5 << ": " << *it_chunk << std::endl;
-	      
+
               for ( unsigned int ithrow = 0; ithrow < 64; ithrow++ )
               {
                 // For the numerator, only consider throws where throwed FD evt vtx x/y/z is in ND FV, same as what is done for ND evts
@@ -1395,7 +1401,7 @@ int main(int argc, char** argv)
                          CurrentThrowDepsZ.emplace_back(eff->getCurrentThrowDepsZ((counter5-1)*64 + ithrow));
                          CurrentThrowTotE.emplace_back(eff->getCurrentThrowsTotE());
                          std::cout<<" iwritten: "<<iwritten<<std::endl;
-                       } */    
+                       } */
                        //VtxYEventsPass = eff->getCurrentThrowTranslationsY();
                        //VtxZEventsPass = eff->getCurrentThrowTranslationsZ();
                     }
@@ -1408,7 +1414,7 @@ int main(int argc, char** argv)
                          CurrentThrowTotE.emplace_back(eff->getCurrentThrowsTotE());
                          std::cout<<" iwritten: "<<iwritten<<std::endl;
                        }
-	    
+
 		    } //end if for events failing*/
 
                 } // end if FD event passed ND FV cut
@@ -1436,7 +1442,7 @@ int main(int argc, char** argv)
                 validThrows = validthrows;
 
                 if (throwfileVerbose) myfile << "        ND_LAr_dtctr_pos: " << ND_LAr_dtctr_pos << "cm,  ND_LAr_vtx_pos: " << ND_LAr_vtx_pos << ", Passed throws: " << hadronpass << ", tot. valid throws: " << validthrows << ", eff: " << ND_GeoEff << "\n\n";
-                //if (verbose) 
+                //if (verbose)
                 cout << "        ND_LAr_dtctr_pos: " << ND_LAr_dtctr_pos << " cm,  ND_LAr_vtx_pos: " << ND_LAr_vtx_pos << " cm, Passed throws: " << hadronpass << ", tot. valid throws: " << validthrows <<"cross check validThrows: "<<validThrows << ", eff: " << ND_GeoEff << "\n\n";
                 effValues->Fill();
 
