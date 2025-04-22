@@ -25,8 +25,11 @@ float NDActiveVol_max[] = { 350.,  150., 500.};
 float NDLAr_OnAxis_offset[]    = { 0.,     5.5, 411.0}; // this offset is only for ND MC when On-Axis, use 0 for FD MC
 
 // Fiducial volume for ND
-float ND_FV_min[] = {-300., -100., 50.};
-float ND_FV_max[] = { 300.,  100., 350.};
+//float ND_FV_min[] = {-300., -100., 50.};
+//float ND_FV_max[] = { 300.,  100., 350.};
+//preprocessed CAFs for PRISM have NDFV between -200, 200 in vtxX
+float ND_FV_min[] = {-200., -100., 50.};
+float ND_FV_max[] = { 200.,  100., 350.};
 
 // Fiducial volume for FD ( minus the same amount from FDActiveVol)
 // float FD_FV_min[] = {-240., -470., 130.};
