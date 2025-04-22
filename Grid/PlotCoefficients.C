@@ -33,7 +33,7 @@ void PlotCoefficients(){
 
   //file with ALL possible data drivend background: RS intrinsic = true and WSbkg (WSB+ WS intrinsic) = true
 
-  TFile* FilePRISMPredNDFDExtrapNewPairedData = new TFile("PRISMPred_OnlyNuMuToNuMu_NoSysts_EnuRecoFDExtrapPred_visEtrue_NewMuonPairedData_NoSysts.root", "READ");
+  TFile* FilePRISMPredNDFDExtrapNewPairedData = new TFile("/localscratch/icaracas/GeomEfficiency/PRISMPred_OnlyNuMuToNuMu_NoSysts_EnuRecoFDExtrapPred_visEtrue_NewMuonPairedData_NoSysts.root", "READ");
   //TFile* FilePRISMPredNDFDExtrapNewPairedData = new TFile("RootFiles/PRISMPred_OnlyNuMuToNuMu_NoSysts_EnuRecoFDExtrapPred_visEtrue_PredInFDErecPred_sameBinsNDErecAndFDErec_NDEffAndFDEffFromFDErecMC_WithMCCorrTestWithFlag.root", "READ");
 
   FilePRISMPredNDFDExtrapNewPairedData->cd();
@@ -50,8 +50,9 @@ void PlotCoefficients(){
   CoefficientsNDPRISM->SetDirectory(0);
 
 
-
-  TH1* CoeffPRISMUpTo3mOA = cloneAndAddBinsToCoeffs(CoefficientsNDPRISM, 2, CoefficientsNDPRISM->GetBinContent(65), CoefficientsNDPRISM->GetBinContent(65));
+  //don't need the adding bins up to 3m OA : using same NDFV as NDCAFs: -2, 2 m
+  // TH1* CoeffPRISMUpTo3mOA = cloneAndAddBinsToCoeffs(CoefficientsNDPRISM, 2, CoefficientsNDPRISM->GetBinContent(65), CoefficientsNDPRISM->GetBinContent(65));
+  TH1D* CoeffPRISMUpTo3mOA =  (TH1D*) CoefficientsNDPRISM->Clone();
 
   cout<<" mean average of coefficients before scaling = "<<CoeffPRISMUpTo3mOA->GetMean(2)<<" integral / nbins: "<< CoeffPRISMUpTo3mOA->Integral()/CoeffPRISMUpTo3mOA->GetNbinsX()<<endl;
   //scale so that average coefficients (on y-axis) = 1
