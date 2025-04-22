@@ -8,5 +8,5 @@ setup python v2_7_3
 export PYTHONPATH=${PYTHONPATH}:${PWD}/lib/
 
 # Optional
-setup root v6_12_06a -q e15:prof
-
+#setup root v6_12_06a -q e15:prof
+setup root v6_28_10b -q e20:p3915:prof
