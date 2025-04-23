@@ -1,6 +1,6 @@
 source /cvmfs/dune.opensciencegrid.org/products/dune/setup_dune.sh
 
-setup cmake v3_18_2
+setup cmake v3_19_6
 setup gcc v6_4_0
 setup eigen v3_3_5
 setup root v6_28_10b -q e20:p3915:prof
