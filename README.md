@@ -11,7 +11,7 @@ git clone --recurse-submodules -b FD_Wei https://github.com/weishi10141993/DUNE_
 # Note for git version (git --version) before 2.13, use: git clone --recursive -b FD_Wei https://github.com/weishi10141993/DUNE_ND_GeoEff.git
 cd DUNE_ND_GeoEff
 source setup.sh                                                                                    # Necessary setups for build
-cmake -DPYTHON_EXECUTABLE:FILEPATH=`which python` .
+cmake -DCMAKE_CXX_STANDARD=17 -DPYTHON_EXECUTABLE:FILEPATH=`which python` .                        # -DCMAKE_CXX_STANDARD=17 for running with root 6.28.10
 make -j geoEff                                                                                     # Build geoEff (can also use: make -j pyGeoEff)
 ```
 
