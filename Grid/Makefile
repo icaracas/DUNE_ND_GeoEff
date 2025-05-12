@@ -2,9 +2,11 @@
 CXX = g++
 CXXFLAGS = `root-config --cflags --libs` -O2 -Wall
 # Target executable
-TARGET = NtupleOutVetoAndTrimE_AssumeEqualEffAtAllOA
+#TARGET = NtupleOutVetoAndTrimE_AssumeEqualEffAtAllOA
+TARGET = NtupleOutVetoAndTrimE_AssumeEqualEffAtAllOA_NOOscSpectrumNOCAFAna_FDRateAtND
 # Source files
-SRCS = NtupleOutVetoAndTrimE_AssumeEqualEffAtAllOA.C
+#SRCS = NtupleOutVetoAndTrimE_AssumeEqualEffAtAllOA.C
+SRCS = NtupleOutVetoAndTrimE_AssumeEqualEffAtAllOA_NOOscSpectrumNOCAFAna_FDRateAtND.C
 # Object files
 OBJS = $(SRCS:.C=.o)
 # Default target
