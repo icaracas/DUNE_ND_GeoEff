@@ -236,9 +236,9 @@ void ProcessFile(TFile *fHad, TFile *fMu){
   vector<Double_t> OAPosition;
   // Generate six evenly spaced point in each non-dead region (NDFV between -200cm to 200cm as in ND CAFs)
   vector<pair<double, double>> non_dead_regions = {
-      {-300, -256.55}, {-253.95, -204.95}, {-203.45, -154.45}, {-151.85, -102.85},
+      {-203.45, -154.45}, {-151.85, -102.85},
       {-101.35, -52.35}, {-49.75, -0.75}, {0.75, 49.75}, {52.35, 101.35},
-      {102.85, 151.85}, {154.45, 203.45}, {204.95, 253.95}, {256.55, 300}
+      {102.85, 151.85}, {154.45, 203.45}
   };
 
 
