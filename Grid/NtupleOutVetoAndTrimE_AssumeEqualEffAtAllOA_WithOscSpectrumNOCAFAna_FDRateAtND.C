@@ -455,12 +455,12 @@ void ProcessFile(TFile *fHad, TFile *fMu){
                 LepMomTot =sqrt(pow((*xyz_mom)[0][0][0],2)+pow((*xyz_mom)[0][0][1],2)+pow((*xyz_mom)[0][0][2],2));
                 TotalLeptonMom[i_entry] = LepMomTot;
                 hist_muEdepEnergy->Fill(LepMomTot);
-                cout<<" Enu = "<<ND_Gen_numu_E<<" Lep mom " <<LepMomTot<<" osc prob enu: "<<calc->P(14,14,ND_Gen_numu_E) <<endl;
+                //cout<<" Enu = "<<ND_Gen_numu_E<<" Lep mom " <<LepMomTot<<" osc prob enu: "<<calc->P(14,14,ND_Gen_numu_E) <<endl;
                 hist_visEnuFDEnergy->Fill(ND_E_vis_true);
-		            //fill osc histos
-		            // hist_EnuFDEnergy_Osc->Fill(ND_Gen_numu_E, calc->P(14,14,ND_Gen_numu_E));
-            		//hist_muEdepEnergy_Osc->Fill(LepMomTot, calc->P(14,14,ND_Gen_numu_E));
-            		//hist_visEnuFDEnergy_Osc->Fill(ND_E_vis_true, calc->P(14,14,ND_Gen_numu_E));
+		//fill osc histos
+		hist_EnuFDEnergy_Osc->Fill(ND_Gen_numu_E, calc->P(14,14,ND_Gen_numu_E));
+            	//hist_muEdepEnergy_Osc->Fill(LepMomTot, calc->P(14,14,ND_Gen_numu_E));
+            	//hist_visEnuFDEnergy_Osc->Fill(ND_E_vis_true, calc->P(14,14,ND_Gen_numu_E));
           }
 
             if(i_ND_LAr_vtx_pos == -196.45) {//only want to fill the histos for 1 vtxX
@@ -826,7 +826,7 @@ void ProcessFile(TFile *fHad, TFile *fMu){
        cout<<" total DetPos: "<<nDetPos<<endl;
        //Get the oscillated spectrum: scale to Posc(Enu)
        HistEtrimAllVtxXTimesCoeffOscillated[i_iwritten] = (TH1D*)HistEtrimAllVtxXTimesCoeff[i_iwritten]->Clone();
-       // HistEtrimAllVtxXTimesCoeffOscillated[i_iwritten]->Scale(calc->P(14,14,EnuTrue[i_iwritten]));
+       HistEtrimAllVtxXTimesCoeffOscillated[i_iwritten]->Scale(calc->P(14,14,EnuTrue[i_iwritten]));
        HistEtrimAllVtxXTimesCoeffOscillated[i_iwritten]->SetName( Form("NuOscHistEtrimPmuWeightedAllVtxXTimesCoeff_FDEvt_%d", i_iwritten));
        HistEtrimAllVtxXTimesCoeffOscillated[i_iwritten]->Write();
 
@@ -850,7 +850,7 @@ void ProcessFile(TFile *fHad, TFile *fMu){
        //get the oscillated spectrum: scale to Posc(Enu)
        HistEtrimAllVtxXTimesCoeffWithFDEvRateOscillated[i_iwritten] = (TH1D*) HistEtrimAllVtxXTimesCoeffWithFDEvRate[i_iwritten]->Clone();
        HistEtrimAllVtxXTimesCoeffWithFDEvRateOscillated[i_iwritten]->Scale(calc->P(14,14,EnuTrue[i_iwritten]));
-       cout<< "aaaaaaa enu = "<<EnuTrue[i_iwritten]<<" P = "<<calc->P(14,14,EnuTrue[i_iwritten])<<endl;
+       //cout<< "aaaaaaa enu = "<<EnuTrue[i_iwritten]<<" P = "<<calc->P(14,14,EnuTrue[i_iwritten])<<endl;
        HistEtrimAllVtxXTimesCoeffWithFDEvRateOscillated[i_iwritten]->SetName( Form("NuOscHistEtrimPmuWeightedAllVtxXTimesCoeffWithFDEvRateAtND_FDEvt_%d", i_iwritten));
        HistEtrimAllVtxXTimesCoeffWithFDEvRateOscillated[i_iwritten]->Write();
 
@@ -876,7 +876,7 @@ void ProcessFile(TFile *fHad, TFile *fMu){
      hist_muEdepEnergy->Write("LepMomTot");
      hist_EnuFDEnergy->Write("hist_EnuFDEnergy");
      hist_visEnuFDEnergy->Write("hist_visEnuFDEnergy");
-     // hist_EnuFDEnergy_Osc->Write("Oschist_EnuFDEnergy");
+     hist_EnuFDEnergy_Osc->Write("Oschist_EnuFDEnergy");
 
      // HistOAPos->Draw("hist");
 
