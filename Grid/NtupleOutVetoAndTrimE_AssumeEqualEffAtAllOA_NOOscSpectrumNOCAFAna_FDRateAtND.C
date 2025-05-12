@@ -77,68 +77,6 @@ vector<double> generatePoints(double start)
   return points;
 }
 
-//vectors for hadron and lepton energy bins used in the spline calculation
-// TVectorT<double>* kHadBinEdges = nullptr;
-// TVectorT<double>* kLepBinEdges = nullptr;
-// TFile* fileSplines = nullptr;
-//
-// vector<double> kHadBinEdges{0,0.1,0.2,0.3,0.4,0.5,1,2,20} ;
-// vector<double> kLepBinEdges = {0,0.5,0.75,1,1.25,1.5,1.75,2,2.25,2.5,2.75,3,4,20};
-
-//function to get the bin index from vector of edges
-// int FindBin(const TVectorT<double>* edges, double value) {
-//     int n = edges->GetNoElements();
-//     for (int i = 0; i < n - 1; ++i) {
-//         if (value >= (*edges)[i] && value < (*edges)[i+1]) {
-//             return i + 1;  // function names are 1-based
-//         }
-//     }
-//     return -1;  // outside range
-// }
-//
-// //function to get the FD Event rate at ND (spline) for given Ehad, Emu and OAPos
-// double FDEventRateAtND(double Ehad, double Emu, double OAPos) {
-//     if (!fileSplines || !kHadBinEdges || !kLepBinEdges) {
-//         std::cerr << "File or bin edges not loaded!\n";
-//         return 0.0;
-//     }
-//
-//     int lepBin = FindBin(kLepBinEdges, Emu);
-//     int hadBin = FindBin(kHadBinEdges, Ehad);
-//
-//     if (lepBin < 1 || hadBin < 1) {
-//         std::cerr << "Energy out of bin range: Emu = " << Emu << ", Ehad = " << Ehad << std::endl;
-//         return 0.0;
-//     }
-//
-//     TString funcName = Form("f_norm_lep%d_had%d", lepBin, hadBin);
-//     TF1* func = (TF1*)fileSplines->Get(funcName);
-//     if (!func) {
-//         std::cerr << "Function " << funcName << " not found!\n";
-//         return 0.0;
-//     }
-//
-//     return func->Eval(OAPos);
-// }
-//
-// //load splines root file
-// void LoadFDEventRateData(const char* filename) {
-//     fileSplines = TFile::Open(filename);
-//     if (!fileSplines || fileSplines->IsZombie()) {
-//         std::cerr << "Failed to open ROOT file: " << filename << std::endl;
-//         return;
-//     }
-//
-//     kHadBinEdges = (TVectorT<double>*)fileSplines->Get("kHadBinEdges");
-//     kLepBinEdges = (TVectorT<double>*)fileSplines->Get("kLepBinEdges");
-//
-//     if (!kHadBinEdges || !kLepBinEdges) {
-//         std::cerr << "Failed to retrieve bin edge vectors from file." << std::endl;
-//     }
-//
-//     cout<<" loaded file this should happen only once"<<endl;
-// }
-
 
 class FunctionCache {
 public:
