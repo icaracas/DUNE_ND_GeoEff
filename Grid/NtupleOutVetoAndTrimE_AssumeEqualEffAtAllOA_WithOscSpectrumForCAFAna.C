@@ -118,7 +118,7 @@ void ProcessFile(TFile *fHad, TFile *fMu, std::function<void(const caf::SRProxy&
 
   bool useCombinedEfficiency = true; //set to false if only hadron eff desired
   //File with coefficients histogram
-  TFile* FileWithCoeffs = new TFile("FileWithCoeffsNuMu.root", "READ");
+  TFile* FileWithCoeffs = new TFile("FileWithCoeffsNuMuNoOsc.root", "READ");
   FileWithCoeffs->cd();
   TH1D* CoefficientsHist = (TH1D*) FileWithCoeffs->Get("CoeffPRISMUpTo3mOA");
   CoefficientsHist->SetDirectory(0);
