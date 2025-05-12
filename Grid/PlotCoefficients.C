@@ -33,8 +33,9 @@ void PlotCoefficients(){
 
   //file with ALL possible data drivend background: RS intrinsic = true and WSbkg (WSB+ WS intrinsic) = true
 
-  TFile* FilePRISMPredNDFDExtrapNewPairedData = new TFile("/localscratch/icaracas/GeomEfficiency/PRISMPred_OnlyNuMuToNuMu_NoSysts_EnuRecoFDExtrapPred_visEtrue_NewMuonPairedData_NoSysts.root", "READ");
-  //TFile* FilePRISMPredNDFDExtrapNewPairedData = new TFile("RootFiles/PRISMPred_OnlyNuMuToNuMu_NoSysts_EnuRecoFDExtrapPred_visEtrue_PredInFDErecPred_sameBinsNDErecAndFDErec_NDEffAndFDEffFromFDErecMC_WithMCCorrTestWithFlag.root", "READ");
+  //TFile* FilePRISMPredNDFDExtrapNewPairedData = new TFile("/localscratch/icaracas/GeomEfficiency/PRISMPred_OnlyNuMuToNuMu_NoSysts_EnuRecoFDExtrapPred_visEtrue_NewMuonPairedData_NoSysts.root", "READ");
+  TFile* FilePRISMPredNDFDExtrapNewPairedData = new TFile("/localscratch/icaracas/GeomEfficiency/PRISMPred_OnlyNuMuToNuMu_NoSysts_EnuRecoFDExtrapPred_visEtrue_OldPairedData_NoSysts_NoOscPred.root", "READ");
+
 
   FilePRISMPredNDFDExtrapNewPairedData->cd();
   TDirectory* MainEventsDir_PRISMPredNDFDExtrap = (TDirectoryFile*) FilePRISMPredNDFDExtrapNewPairedData->Get("numu_EvMatch");
@@ -68,7 +69,7 @@ void PlotCoefficients(){
 
   CoeffPRISMUpTo3mOA->Draw("hist");
 
-  TFile* FileWithCoeffsNuMu = new TFile("FileWithCoeffsNuMu.root", "RECREATE");
+  TFile* FileWithCoeffsNuMu = new TFile("FileWithCoeffsNuMuNoOsc.root", "RECREATE");
   CoeffPRISMUpTo3mOA->Write("CoeffPRISMUpTo3mOA");
   FileWithCoeffsNuMu->Write();
   FileWithCoeffsNuMu->Close();
