@@ -206,6 +206,7 @@ void ProcessFile(TFile *fHad, TFile *fMu){
   gInterpreter->GenerateDictionary("vector<vector<vector<double> > >", "vector");
 
   bool useCombinedEfficiency = true; //set to false if only hadron eff desired
+  bool scaleToCombinedEfficiency = true; //set to false if hadron eff scaling is desired
   //File with coefficients histogram
   TFile* FileWithCoeffs = new TFile("FileWithCoeffsNuMu.root", "READ");
   FileWithCoeffs->cd();
@@ -771,10 +772,13 @@ void ProcessFile(TFile *fHad, TFile *fMu){
 
                    if(HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Integral()!=0)
                     HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale(HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Integral()/HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Integral());
-
-                   HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale(ND_GeoEff/nthrowsToLoop*CoefficientsAtOAPos * 1.0/WeightEventsAtOaPos);
-                   HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale(ND_GeoEff/nthrowsToLoop*CoefficientsAtOAPos * 1.0/WeightEventsAtOaPos);
-
+                   if(scaleToCombinedEfficiency){
+		     HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale((*combined_eff)[i_vtxX_plot-1]/nthrowsToLoop*CoefficientsAtOAPos * 1.0/WeightEventsAtOaPos);
+                     HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale((*combined_eff)[i_vtxX_plot-1]/nthrowsToLoop*CoefficientsAtOAPos * 1.0/WeightEventsAtOaPos);
+		   } else {
+                     HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale(ND_GeoEff/nthrowsToLoop*CoefficientsAtOAPos * 1.0/WeightEventsAtOaPos);
+                     HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale(ND_GeoEff/nthrowsToLoop*CoefficientsAtOAPos * 1.0/WeightEventsAtOaPos);
+                   }
 
                 //   HistEtrimDetPos[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Write(HistEtrimDetPos[i_iwritten][i_vtxX_plot-1][i_detpos-1]->GetName());
                    HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Write(HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->GetName());
@@ -850,7 +854,7 @@ void ProcessFile(TFile *fHad, TFile *fMu){
        //get the oscillated spectrum: scale to Posc(Enu)
        HistEtrimAllVtxXTimesCoeffWithFDEvRateOscillated[i_iwritten] = (TH1D*) HistEtrimAllVtxXTimesCoeffWithFDEvRate[i_iwritten]->Clone();
        HistEtrimAllVtxXTimesCoeffWithFDEvRateOscillated[i_iwritten]->Scale(calc->P(14,14,EnuTrue[i_iwritten]));
-       //cout<< "aaaaaaa enu = "<<EnuTrue[i_iwritten]<<" P = "<<calc->P(14,14,EnuTrue[i_iwritten])<<endl;
+       cout<< "aaaaaaa enu = "<<EnuTrue[i_iwritten]<<" P = "<<calc->P(14,14,EnuTrue[i_iwritten])<<endl;
        HistEtrimAllVtxXTimesCoeffWithFDEvRateOscillated[i_iwritten]->SetName( Form("NuOscHistEtrimPmuWeightedAllVtxXTimesCoeffWithFDEvRateAtND_FDEvt_%d", i_iwritten));
        HistEtrimAllVtxXTimesCoeffWithFDEvRateOscillated[i_iwritten]->Write();
 
