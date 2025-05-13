@@ -206,6 +206,7 @@ void ProcessFile(TFile *fHad, TFile *fMu){
   gInterpreter->GenerateDictionary("vector<vector<vector<double> > >", "vector");
 
   bool useCombinedEfficiency = true; //set to false if only hadron eff desired
+  bool scaleToCombinedEfficiency = false; //set to false if hadron eff scaling is desired
   //File with coefficients histogram
   TFile* FileWithCoeffs = new TFile("FileWithCoeffsNuMuNoOsc.root", "READ");
   FileWithCoeffs->cd();
@@ -493,6 +494,11 @@ void ProcessFile(TFile *fHad, TFile *fMu){
     {
       cout<<" i_iwritten: "<<i_iwritten<<endl;
 
+      if(TotalLeptonMom[i_iwritten] > 20) {
+        cout<<" Emu > 20 GeV, Emu = "<<TotalLeptonMom[i_iwritten]<<" not interested in so high energies, skip event " <<endl;
+        continue;
+      }
+
       Int_t i_vtxX_plot=0;
 
       t_effMu->GetEntry(i_iwritten);
@@ -529,8 +535,8 @@ void ProcessFile(TFile *fHad, TFile *fMu){
                 nPassThrowsPerVtx[i_vtxX_plot-1] = 0;
               else
                 nPassThrowsPerVtx[i_vtxX_plot]=nPassThrowsPerEvent;
-              //
-
+              
+              nPassThrowsPerVtx[1] = nPassThrowsPerEvent;
 
               int nthrowsToLoop = NPassedThrows; //this is going to be the validThrows
 
@@ -538,6 +544,11 @@ void ProcessFile(TFile *fHad, TFile *fMu){
               for (Int_t ithrow = 0; ithrow < nthrowsToLoop; ithrow++ ){
                 ThrowInfo info;
 
+                if(TrimEnergyEventsPass->at(ithrow)*1E-3 > 20){
+                  cout<<" skipping this throw, Ehad = "<<TrimEnergyEventsPass->at(ithrow)*1E-3<<" GeV, > 20 GeV"<<endl;
+                  continue;
+                }
+               
                 info.Etrim = TrimEnergyEventsPass->at(ithrow);  //save trimmed hadron energy per throw
                 info.Emu   = TotalLeptonMom[i_iwritten]*1E3;
                 info.weightPmuon = (*weightPmuon)[nPassThrowsPerVtx[i_vtxX_plot-1]+ ithrow+1][0];
@@ -557,17 +568,14 @@ void ProcessFile(TFile *fHad, TFile *fMu){
 
 
 
-
-
-
-
-
-
-
-
      for (Int_t i_iwritten = 0; i_iwritten<nFDEvents; i_iwritten++)
      {
        cout<<" i_iwritten: "<<i_iwritten<<endl;
+       if(TotalLeptonMom[i_iwritten] > 20) {
+         cout<<" Emu > 20 GeV, Emu = "<<TotalLeptonMom[i_iwritten]<<" not interested in so high energies, skip event " <<endl;
+         continue;
+       }
+
        Double_t x_ND_LAr_vtx_pos[ND_vtx_vx_vec_size];
        Double_t y_geoeff[ND_vtx_vx_vec_size];
        Double_t y_geoEffOAPos[ND_vtx_vx_vec_size * nDetPos];
@@ -771,10 +779,13 @@ void ProcessFile(TFile *fHad, TFile *fMu){
 
                    if(HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Integral()!=0)
                     HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale(HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Integral()/HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Integral());
-
-                   HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale(ND_GeoEff/nthrowsToLoop*CoefficientsAtOAPos * 1.0/WeightEventsAtOaPos);
-                   HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale(ND_GeoEff/nthrowsToLoop*CoefficientsAtOAPos * 1.0/WeightEventsAtOaPos);
-
+                   if(scaleToCombinedEfficiency){
+                     HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale((*combined_eff)[i_vtxX_plot-1]/nthrowsToLoop*CoefficientsAtOAPos * 1.0/WeightEventsAtOaPos);
+                     HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale((*combined_eff)[i_vtxX_plot-1]/nthrowsToLoop*CoefficientsAtOAPos * 1.0/WeightEventsAtOaPos);
+		   } else {
+                     HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale(ND_GeoEff/nthrowsToLoop*CoefficientsAtOAPos * 1.0/WeightEventsAtOaPos);
+                     HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale(ND_GeoEff/nthrowsToLoop*CoefficientsAtOAPos * 1.0/WeightEventsAtOaPos);
+                   }
 
                 //   HistEtrimDetPos[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Write(HistEtrimDetPos[i_iwritten][i_vtxX_plot-1][i_detpos-1]->GetName());
                    HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Write(HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->GetName());
