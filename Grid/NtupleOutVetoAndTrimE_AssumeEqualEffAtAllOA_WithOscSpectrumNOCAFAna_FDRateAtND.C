@@ -434,6 +434,7 @@ void ProcessFile(TFile *fHad, TFile *fMu){
   };
 
   std::vector<std::vector<std::vector<ThrowInfo>>> AllThrowInfo;
+  double MuMass = 0.1057; //GeV
 
   for (int i_iwritten = 0; i_iwritten<nFDEvents; i_iwritten++)
   { HistOAPos[i_iwritten] = new TH1D(Form("HistOAPos_FDEvt_%d", i_iwritten), Form("HistOAPos_FDEvt_%d", i_iwritten), 67, -30.5, 3);
@@ -453,11 +454,10 @@ void ProcessFile(TFile *fHad, TFile *fMu){
             if(i_entry<nFDEvents){
                 hist_EnuFDEnergy->Fill(ND_Gen_numu_E);
                 EnuTrue[i_entry] = ND_Gen_numu_E;
-                LepMomTot =sqrt(pow((*xyz_mom)[0][0][0],2)+pow((*xyz_mom)[0][0][1],2)+pow((*xyz_mom)[0][0][2],2));
+                LepMomTot =sqrt(pow((*xyz_mom)[0][0][0],2)+pow((*xyz_mom)[0][0][1],2)+pow((*xyz_mom)[0][0][2],2) + pow(MuMass, 2));
                 TotalLeptonMom[i_entry] = LepMomTot;
                 hist_muEdepEnergy->Fill(LepMomTot);
-
-                //cout<<" Enu = "<<ND_Gen_numu_E<<" Lep mom " <<LepMomTot<<" osc prob enu: "<<calc->P(14,14,ND_Gen_numu_E) <<endl;
+               // cout<<" Enu = "<<ND_Gen_numu_E<<" Lep mom " <<LepMomTot<<" total had energy "<<totEnergyFDatND_f<< " Emu with mu mass "<<sqrt(pow((*xyz_mom)[0][0][0],2)+pow((*xyz_mom)[0][0][1],2)+pow((*xyz_mom)[0][0][2],2) + pow(0.1057, 2) ) <<endl;
                 hist_visEnuFDEnergy->Fill(ND_E_vis_true);
 		//fill osc histos
 		hist_EnuFDEnergy_Osc->Fill(ND_Gen_numu_E, calc->P(14,14,ND_Gen_numu_E));
@@ -468,7 +468,7 @@ void ProcessFile(TFile *fHad, TFile *fMu){
             if(i_ND_LAr_vtx_pos == -196.45) {//only want to fill the histos for 1 vtxX
 
               hist_FDTotEnergy->Fill(totEnergyFDatND_f);
-              //cout<<" i_iwritten "<<i_iwritten<<" totEnergyFDatND_f "<<totEnergyFDatND_f<<" mu energy: "<<muonEdep_f<<" Enu = "<<ND_Gen_numu_E<<endl;
+              //cout<<" i_iwritten "<<i_iwritten<<" totEnergyFDatND_f "<<totEnergyFDatND_f<<" mu energy: "<<muonEdep_f<<" Enu = "<<ND_Gen_numu_E<<" Lep mom " <<LepMomTot<<" total had energy "<<totEnergyFDatND_f<< " Emu with mu mass "<<sqrt(pow((*xyz_mom)[0][0][0],2)+pow((*xyz_mom)[0][0][1],2)+pow((*xyz_mom)[0][0][2],2) + pow(0.1057, 2) )<<endl;
 
             }
 
