@@ -206,7 +206,7 @@ void ProcessFile(TFile *fHad, TFile *fMu){
   gInterpreter->GenerateDictionary("vector<vector<vector<double> > >", "vector");
 
   bool useCombinedEfficiency = true; //set to false if only hadron eff desired
-  bool scaleToCombinedEfficiency = false; //set to false if hadron eff scaling is desired
+  bool scaleToCombinedEfficiency = true; //set to false if hadron eff scaling is desired
   //File with coefficients histogram
   TFile* FileWithCoeffs = new TFile("FileWithCoeffsNuMuNoOsc.root", "READ");
   FileWithCoeffs->cd();
