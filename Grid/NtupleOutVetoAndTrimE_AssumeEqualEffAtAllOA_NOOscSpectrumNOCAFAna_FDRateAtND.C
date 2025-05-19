@@ -434,6 +434,7 @@ void ProcessFile(TFile *fHad, TFile *fMu){
   };
 
   std::vector<std::vector<std::vector<ThrowInfo>>> AllThrowInfo;
+  double MuMass = 0.1057; //GeV
 
   for (int i_iwritten = 0; i_iwritten<nFDEvents; i_iwritten++)
   { HistOAPos[i_iwritten] = new TH1D(Form("HistOAPos_FDEvt_%d", i_iwritten), Form("HistOAPos_FDEvt_%d", i_iwritten), 67, -30.5, 3);
@@ -453,7 +454,7 @@ void ProcessFile(TFile *fHad, TFile *fMu){
             if(i_entry<nFDEvents){
                 hist_EnuFDEnergy->Fill(ND_Gen_numu_E);
                 EnuTrue[i_entry] = ND_Gen_numu_E;
-                LepMomTot =sqrt(pow((*xyz_mom)[0][0][0],2)+pow((*xyz_mom)[0][0][1],2)+pow((*xyz_mom)[0][0][2],2));
+                LepMomTot =sqrt(pow((*xyz_mom)[0][0][0],2)+pow((*xyz_mom)[0][0][1],2)+pow((*xyz_mom)[0][0][2],2) + pow(MuMass, 2));
                 TotalLeptonMom[i_entry] = LepMomTot;
                 hist_muEdepEnergy->Fill(LepMomTot);
                 cout<<" Enu = "<<ND_Gen_numu_E<<" Lep mom " <<LepMomTot<<endl;
@@ -777,15 +778,36 @@ void ProcessFile(TFile *fHad, TFile *fMu){
                    }
 
 
-                   if(HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Integral()!=0)
-                    HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale(HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Integral()/HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Integral());
-                   if(scaleToCombinedEfficiency){
-                     HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale((*combined_eff)[i_vtxX_plot-1]/nthrowsToLoop*CoefficientsAtOAPos * 1.0/WeightEventsAtOaPos);
-                     HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale((*combined_eff)[i_vtxX_plot-1]/nthrowsToLoop*CoefficientsAtOAPos * 1.0/WeightEventsAtOaPos);
-		   } else {
-                     HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale(ND_GeoEff/nthrowsToLoop*CoefficientsAtOAPos * 1.0/WeightEventsAtOaPos);
-                     HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale(ND_GeoEff/nthrowsToLoop*CoefficientsAtOAPos * 1.0/WeightEventsAtOaPos);
+                   /*if(HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Integral()!=0)
+                    HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale(HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Integral()/HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Integral());*/
+
+ //====scale events to desired efficiency and apply lin. comb OA coefficients
+                    if(scaleToCombinedEfficiency){
+                     //1. scale events so that the integral of 1 event at 1 detPos(after all random throws at all vtxX) = average combined geometric efficiency (= (*combined_eff)[i_vtxX_plot-1])
+                     if(HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Integral() != 0)
+                        HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale( (*combined_eff)[i_vtxX_plot-1] / HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Integral() );
+                     //2. now apply the lin. comb. coefficients
+                     HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale(CoefficientsAtOAPos * 1.0/WeightEventsAtOaPos);
+                     //=== do the same for the case when FD event rate at ND is accounted for:
+                     //1. scale events so that the integral of 1 event at 1 detPos(after all random throws at all vtxX) = average combined geometric efficiency (= (*combined_eff)[i_vtxX_plot-1])
+                     if(HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Integral() != 0)
+                        HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale( (*combined_eff)[i_vtxX_plot-1]/ HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Integral() );
+                     //2. now apply the lin. comb. coefficients
+                     HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale(CoefficientsAtOAPos * 1.0/WeightEventsAtOaPos);
+                   } else {
+                       //1. scale events so that the integral of 1 event at 1 detPos(after all random throws at all vtxX) = average hadron geometric efficiency (= ND_GeoEFF)
+                       if(HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Integral() != 0)
+                          HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale((ND_GeoEff) / HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Integral());
+                       //2. now apply the lin. comb. coefficients
+                       HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale(CoefficientsAtOAPos * 1.0/WeightEventsAtOaPos);
+                       //=== do the same for the case when FD event rate at ND is accounted for:
+                       //1. scale events so that the integral of 1 event at 1 detPos(after all random throws at all vtxX) = average hadron geometric efficiency (= ND_GeoEFF)
+                       if(HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Integral()!=0)
+                          HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale((ND_GeoEff) / HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Integral());
+                       //2. now apply the lin. comb. coefficients
+                       HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale(CoefficientsAtOAPos * 1.0/WeightEventsAtOaPos);
                    }
+
 
                 //   HistEtrimDetPos[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Write(HistEtrimDetPos[i_iwritten][i_vtxX_plot-1][i_detpos-1]->GetName());
                    HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Write(HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->GetName());
