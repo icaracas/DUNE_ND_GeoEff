@@ -206,7 +206,7 @@ void ProcessFile(TFile *fHad, TFile *fMu){
   gInterpreter->GenerateDictionary("vector<vector<vector<double> > >", "vector");
 
   bool useCombinedEfficiency = true; //set to false if only hadron eff desired
-  bool scaleToCombinedEfficiency = true; //set to false if hadron eff scaling is desired
+  bool scaleToCombinedEfficiency = false; //set to false if hadron eff scaling is desired
   //File with coefficients histogram
   TFile* FileWithCoeffs = new TFile("FileWithCoeffsNuMuNoOsc.root", "READ");
   FileWithCoeffs->cd();
@@ -232,7 +232,7 @@ void ProcessFile(TFile *fHad, TFile *fMu){
   cout<<" rate = "<<rate<<endl;*/
 
   // 0. FD: read event from FD MC ntuple: before earth curvature rotation
-  vector<Double_t> a_ND_off_axis_pos_vec = {0, -1.75, -2, -4, 5.75, -8, -9.75, -12, -13.75, -16, -17.75, -20, -21.75, -24, -25.75, -26.25, -28, -28.25, -28.5};
+  vector<Double_t> a_ND_off_axis_pos_vec = {0, -1.75, -2, -4,-5.75, -8, -9.75, -12, -13.75, -16, -17.75, -20, -21.75, -24, -25.75, -26.25, -28, -28.25, -28.5};
   vector<Double_t> a_ND_vtx_vx_vec;
   vector<Double_t> OAPosition;
   // Generate six evenly spaced point in each non-dead region (NDFV between -200cm to 200cm as in ND CAFs)
@@ -796,16 +796,16 @@ void ProcessFile(TFile *fHad, TFile *fMu){
                      HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale(CoefficientsAtOAPos * 1.0/WeightEventsAtOaPos);
                    } else {
                        //1. scale events so that the integral of 1 event at 1 detPos(after all random throws at all vtxX) = average hadron geometric efficiency (= ND_GeoEFF)
-                       if(HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Integral() != 0)
-                          HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale((ND_GeoEff) / HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Integral());
+                       /*if(HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Integral() != 0)
+                          HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale((ND_GeoEff) / HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Integral());*/
                        //2. now apply the lin. comb. coefficients
-                       HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale(CoefficientsAtOAPos * 1.0/WeightEventsAtOaPos);
+                       HistEtrimDetPosNoFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale(1.0/validThrows * CoefficientsAtOAPos * 1.0/WeightEventsAtOaPos);
                        //=== do the same for the case when FD event rate at ND is accounted for:
                        //1. scale events so that the integral of 1 event at 1 detPos(after all random throws at all vtxX) = average hadron geometric efficiency (= ND_GeoEFF)
-                       if(HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Integral()!=0)
-                          HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale((ND_GeoEff) / HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Integral());
+                      /* if(HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Integral()!=0)
+                          HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale((ND_GeoEff) / HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Integral());*/
                        //2. now apply the lin. comb. coefficients
-                       HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale(CoefficientsAtOAPos * 1.0/WeightEventsAtOaPos);
+                       HistEtrimDetPosWithFDEventRate[i_iwritten][i_vtxX_plot-1][i_detpos-1]->Scale(1.0/validThrows * CoefficientsAtOAPos * 1.0/WeightEventsAtOaPos);
                    }
 
 
