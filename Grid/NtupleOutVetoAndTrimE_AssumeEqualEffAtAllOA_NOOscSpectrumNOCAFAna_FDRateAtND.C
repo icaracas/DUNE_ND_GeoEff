@@ -492,7 +492,7 @@ void ProcessFile(TFile *fHad, TFile *fMu){
               hist_FDTotEnergy->Fill(totEnergyFDatND_f);
               hist_muEdep->Fill(muonEdep_f);
               hist_muTrackLength->Fill(muonTrackLength_f);
-              cout<<" i_iwritten "<<i_iwritten<<" totEnergyFDatND_f "<<totEnergyFDatND_f<<" mu energy: "<<muonEdep_f<<" mu Track Length: "<<muonTrackLength_f<< " Enu = "<<ND_Gen_numu_E<<endl;
+              //cout<<" i_iwritten "<<i_iwritten<<" totEnergyFDatND_f "<<totEnergyFDatND_f<<" mu energy: "<<muonEdep_f<<" mu Track Length: "<<muonTrackLength_f<< " Enu = "<<ND_Gen_numu_E<<endl;
               weightCAFLike[i_iwritten] = 1.;
               if(muonTrackLength_f < 100. || muonEdep_f/muonTrackLength_f > 3.){
                  cout<<"** this event will not be selected!! "<<" ev nr "<<i_iwritten<<" muon e dep: "<<muonEdep_f<<" muon track length: "<<muonTrackLength_f<<endl;
@@ -613,6 +613,10 @@ void ProcessFile(TFile *fHad, TFile *fMu){
 
     TH2D* AllThrownEventsVsOAPosVsTotalETrim[nFDEvents];
     TH2D* SelectedEventsVsOAPosVsTotalETrim[nFDEvents];
+
+    TH2D* AllThrownEventsVsOAPosVsTrueEnu[nFDEvents];
+    TH2D* SelectedEventsVsOAPosVsTrueEnu[nFDEvents];
+
     std::cout<<" saving 2D histos with selected and all thrown events vs Etrim+Emu vs OA Pos for same binning as in PRISM "<<std::endl;
     //energy edges same as in CAFAna
     std::vector<double> edges;
@@ -673,6 +677,11 @@ void ProcessFile(TFile *fHad, TFile *fMu){
        AllThrownEventsVsOAPosVsTotalETrim[i_iwritten] = new TH2D(NameAllThrownEventsVsOAPosVsTotalETrim, NameAllThrownEventsVsOAPosVsTotalETrim, nBinsEnergy, EnergyEdges, 65, -30.5, 2 );
        TString NameSelectedEventsAverageEfficiency = Form("SelectedEventsTwoDHisto_FDEvt_%d", i_iwritten);
        SelectedEventsVsOAPosVsTotalETrim[i_iwritten] = new TH2D(NameSelectedEventsAverageEfficiency, NameSelectedEventsAverageEfficiency, nBinsEnergy, EnergyEdges, 65, -30.5, 2 );
+
+       TString NameAllThrownEventsVsOAPosVsTrueEnu = Form("AllThrownEventsVsOAPosVsTrueEnu_FDEvt_%d", i_iwritten);
+       AllThrownEventsVsOAPosVsTrueEnu[i_iwritten] = new TH2D(NameAllThrownEventsVsOAPosVsTrueEnu, NameAllThrownEventsVsOAPosVsTrueEnu, nBinsEnergy, EnergyEdges, 65, -30.5, 2 );
+       TString NameSelectedEventsAverageEfficiencyTrueEnu = Form("SelectedEventsTrueEnuTwoDHisto_FDEvt_%d", i_iwritten);
+       SelectedEventsVsOAPosVsTrueEnu[i_iwritten] = new TH2D(NameSelectedEventsAverageEfficiencyTrueEnu, NameSelectedEventsAverageEfficiencyTrueEnu, nBinsEnergy, EnergyEdges, 65, -30.5, 2 );
 
        Int_t n_plot = 0;
        Int_t i_n_plot = 0;
@@ -794,6 +803,9 @@ void ProcessFile(TFile *fHad, TFile *fMu){
                       SelectedEventsVsOAPosVsTotalETrim[i_iwritten]->Fill((info.Etrim + info.Emu)/1000 ,OAPos, info.weightPmuon* 1.0/WeightEventsAtOaPos  * weightCAFLike[i_iwritten] * FDEventRateAtND_ETrue(cacheEtrue, EnuTrue[i_iwritten], OAPos));//FDEventRateAtND(cacheLepHad, info.Etrim *1E-3 , info.Emu*1E-3, OAPos));
                       AllThrownEventsVsOAPosVsTotalETrim[i_iwritten]->Fill((info.Etrim + info.Emu)/1000 , OAPos, double(validThrows)/throwList.size()* 1.0/WeightEventsAtOaPos * FDEventRateAtND_ETrue(cacheEtrue, EnuTrue[i_iwritten], OAPos));// FDEventRateAtND(cacheLepHad, info.Etrim *1E-3 , info.Emu*1E-3, OAPos));
 
+                      SelectedEventsVsOAPosVsTrueEnu[i_iwritten]->Fill(EnuTrue[i_iwritten],OAPos, info.weightPmuon* 1.0/WeightEventsAtOaPos  * weightCAFLike[i_iwritten] * FDEventRateAtND_ETrue(cacheEtrue, EnuTrue[i_iwritten], OAPos));//FDEventRateAtND(cacheLepHad, info.Etrim *1E-3 , info.Emu*1E-3, OAPos));
+                      AllThrownEventsVsOAPosVsTrueEnu[i_iwritten]->Fill(EnuTrue[i_iwritten] , OAPos, double(validThrows)/throwList.size()* 1.0/WeightEventsAtOaPos * FDEventRateAtND_ETrue(cacheEtrue, EnuTrue[i_iwritten], OAPos));// FDEventRateAtND(cacheLepHad, info.Etrim *1E-3 , info.Emu*1E-3, OAPos));
+
 
 
                       //cout<<" rate "<< " Etrim " <<info.Etrim *1E-3<<" emu "<< info.Emu*1E-3<< "OApos " <<OAPos<<" rate: "<<FDEventRateAtND(cache, info.Etrim *1E-3 , info.Emu*1E-3, OAPos)<<endl;
@@ -897,6 +909,9 @@ void ProcessFile(TFile *fHad, TFile *fMu){
        SelectedEventsVsOAPosVsTotalETrim[i_iwritten]->Write();
        AllThrownEventsVsOAPosVsTotalETrim[i_iwritten]->Write();
 
+       SelectedEventsVsOAPosVsTrueEnu[i_iwritten]->Write();
+       AllThrownEventsVsOAPosVsTrueEnu[i_iwritten]->Write();
+
 
 
        // cout<<" ndet pos = "<<nDetPos<<endl;
@@ -910,6 +925,9 @@ void ProcessFile(TFile *fHad, TFile *fMu){
        // delete HistEtrimAllVtxXTimesCoeffWithFDEvRateOscillated[i_iwritten];
        delete SelectedEventsVsOAPosVsTotalETrim[i_iwritten];
        delete AllThrownEventsVsOAPosVsTotalETrim[i_iwritten];
+
+       delete SelectedEventsVsOAPosVsTrueEnu[i_iwritten];
+       delete AllThrownEventsVsOAPosVsTrueEnu[i_iwritten];
 
 
      }//end iwritten
